@@ -145,7 +145,7 @@ function store(token) {
 function init(domain, error) {
 
 	// Store the domain
-	_domain = 'htps://' + domain + '/';
+	_domain = 'https://' + domain + '/';
 
 	// Do we have a session in storage
 	if('_session' in localStorage && localStorage['_session']) {

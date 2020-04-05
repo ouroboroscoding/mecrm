@@ -1,5 +1,5 @@
 /**
- * App
+ * Site
  *
  * Primary entry into React app
  *
@@ -11,14 +11,17 @@
 // NPM modules
 import React from 'react';
 
-// Local modules
+// Generic modules
 import Events from './generic/events';
 import Hash from './generic/hash';
-import Loader from './generic/loader';
 import Services from './generic/services';
 
-// Components
+// Component modules
 import Header from './components/header';
+import Signin from './components/signin';
+
+// Local modules
+import Loader from './loader';
 
 // css
 import './sass/site.scss';
@@ -29,7 +32,7 @@ Services.init(process.env.REACT_APP_MEMS_DOMAIN, function(xhr) {
 	// If we got a 401, let everyone know we signed out
 	if(xhr.status === 401) {
 		Events.trigger('error', 'You have been signed out!');
-		Events.trigger('signout');
+		Events.trigger('signedOut');
 	}
 });
 
@@ -37,7 +40,7 @@ Services.init(process.env.REACT_APP_MEMS_DOMAIN, function(xhr) {
 if(Services.session()) {
 	Loader.show();
 	Services.read('auth', 'session', {}).done(res => {
-		Events.trigger('signin', res.data);
+		Events.trigger('signedIn', res.data);
 	}).always(() => {
 		Loader.hide();
 	});
@@ -50,7 +53,7 @@ Loader.hide();
 window.Events = Events;
 
 // app
-class App extends React.Component {
+class Site extends React.Component {
 
 	constructor(props) {
 
@@ -61,9 +64,9 @@ class App extends React.Component {
 		Hash.init();
 		Hash.watch('page', this.pageHash.bind(this));
 
-		// Track any signin/signout events
-		Events.add('signin', this.signin.bind(this));
-		Events.add('signout', this.signout.bind(this));
+		// Track any signedIn/signedOut events
+		Events.add('signedIn', this.signedIn.bind(this));
+		Events.add('signedOut', this.signedOut.bind(this));
 
 		// Initialise the state
 		this.state = {
@@ -90,26 +93,26 @@ class App extends React.Component {
 	render() {
 		return (
 			<div className="site">
+				{this.state.user === false &&
+					<Signin />
+				}
 				<Header user={this.state.user} />
 			</div>
 		);
 	}
 
-	signin(thrower) {
-		this.setState({"thrower": thrower});
+	signedIn(user) {
+
+		// Set the user
+		this.setState({"user": user});
 	}
 
-	signout() {
+	signedOut() {
 
-		// If the page needs to be signed in
-		if([].indexOf(this.state.page) === -1) {
-			Hash.set('page', null);
-		}
-
-		// Remove the thrower flag
-		this.setState({"thrower": false});
+		// Remove the user
+		this.setState({"user": false});
 	}
 }
 
 // Export the app
-export default App;
+export default Site;
