@@ -10,8 +10,34 @@
 
 /* components */
 @import 'header';
+@import 'user';
 
 /* site */
 #root {
 	height: 100%;
+}
+
+#content {
+	padding: 10px;
+}
+
+a, a:active, a:hover, a:link, a:visited {
+	color: inherit;
+	text-decoration: none;
+}
+
+.fakeAnchor {
+	cursor: pointer;
+}
+
+.pageHeader {
+	display: flex;
+
+	.title {
+		flex-grow: 1
+	}
+
+	.icon {
+		font-size: 3.5rem;
+	}
 }

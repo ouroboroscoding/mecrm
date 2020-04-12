@@ -20,18 +20,15 @@ import Dialog from '@material-ui/core/Dialog';
 import TextField from '@material-ui/core/TextField';
 
 // Generic modules
-import Events from '../generic/events';
-import Hash from '../generic/hash';
-import Services from '../generic/services';
-
-// Components
-import Forms from './forms';
+import Events from '../../generic/events';
+import Hash from '../../generic/hash';
+import Services from '../../generic/services';
 
 // Local modules
-import Loader from '../loader';
-import Utils from '../utils';
+import Loader from '../../loader';
+import Utils from '../../utils';
 
-// app
+// Sign In
 class Signin extends React.Component {
 
 	constructor(props) {
@@ -44,12 +41,13 @@ class Signin extends React.Component {
 
 		// Initialise the state
 		this.state = {
+			"errors": {},
 			"forgot": key ? key : false,
 			"form": key ? 'forgot' : 'signin'
 		};
 
 		// Init refs
-		this.els = {};
+		this.fields = {};
 
 		// Bind methods to this instance
 		this.signin = this.signin.bind(this);
@@ -68,11 +66,23 @@ class Signin extends React.Component {
 				{this.state.form === 'signin' &&
 					<React.Fragment>
 						<DialogContent dividers>
-							<div><TextField inputRef={el => this.els.email = el} label="Email" /></div>
-							<div><TextField inputRef={el => this.els.passwd = el} label="Password" type="password" /></div>
+							<div><TextField
+								error={this.state.errors.email ? true : false}
+								helperText={this.state.errors.email || ''}
+								inputRef={el => this.fields.email = el}
+								label="Email"
+								type="email"
+							/></div>
+							<div><TextField
+								error={this.state.errors.passwd ? true : false}
+								helperText={this.state.errors.passwd || ''}
+								inputRef={el => this.fields.passwd = el}
+								label="Password"
+								type="password"
+							/></div>
 						</DialogContent>
 						<DialogActions>
-							<Button onClick={this.signin} color="primary">
+							<Button variant="contained" color="primary" onClick={this.signin}>
 								Sign In
 							</Button>
 						</DialogActions>
@@ -92,21 +102,23 @@ class Signin extends React.Component {
 
 		// Call the signin
 		Services.create('auth', 'signin', {
-			"email": this.els.email.value,
-			"passwd": this.els.passwd.value
+			"email": this.fields.email.value,
+			"passwd": this.fields.passwd.value
 		}).done(res => {
 
 			// If there's an error
 			if(res.error && !Utils.serviceError(res.error)) {
 				switch(res.error.code) {
 					case 1001:
-						// Go through each message and make the ref red
-						for(var i in res.error.msg) {
-							Forms.errorAdd(this.els[i]);
+						// Go through each message and mark the error
+						let errors = {};
+						for(let i in res.error.msg) {
+							errors[i] = res.error.msg[i];
 						}
+						this.setState({"errors": errors});
 						break;
 					case 1201:
-						Events.trigger('error', 'Alias or password invalid');
+						Events.trigger('error', 'Email or password invalid');
 						break;
 					default:
 						Events.trigger('error', JSON.stringify(res.error));

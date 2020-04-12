@@ -10,23 +10,31 @@
 
 // NPM modules
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 // Material UI
 import AppBar from '@material-ui/core/AppBar';
 import Button from '@material-ui/core/Button';
 import Drawer from '@material-ui/core/Drawer';
 import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 
+// Material UI Icons
+import MenuIcon from '@material-ui/icons/Menu';
+import GroupIcon from '@material-ui/icons/Group';
+
 // Generic modules
-import Events from '../generic/events';
-import Services from '../generic/services';
+import Events from '../../generic/events';
+import Services from '../../generic/services';
 
 // Local modules
-import Loader from '../loader';
-import Utils from '../utils';
+import Loader from '../../loader';
+import Utils from '../../utils';
 
 // app
 class Header extends React.Component {
@@ -43,10 +51,11 @@ class Header extends React.Component {
 		}
 
 		// Bind methods to this instance
+		this.menuClose = this.menuClose.bind(this);
+		this.menuToggle = this.menuToggle.bind(this);
 		this.signedIn = this.signedIn.bind(this);
 		this.signedOut = this.signedOut.bind(this);
 		this.signout = this.signout.bind(this);
-		this.toggleMenu = this.toggleMenu.bind(this);
 	}
 
 	componentDidMount() {
@@ -63,18 +72,32 @@ class Header extends React.Component {
 		Events.remove('signedOut', this.signedOut);
 	}
 
-	render() {
-		let drawer = <div>Menu Menu!</div>
+	menuClose() {
+		// Close the state of the menu
+		this.setState({
+			"menu": false
+		})
+	}
 
+	menuToggle() {
+		// Toggle the state of the menu
+		this.setState({
+			"menu": !this.state.menu
+		});
+	}
+
+	render() {
 		return (
 			<div id="header">
 				<AppBar position="static">
 					<Toolbar>
-						<IconButton edge="start" color="inherit" aria-label="menu">
-							<MenuIcon onClick={this.toggleMenu} />
+						<IconButton edge="start" color="inherit" aria-label="menu" onClick={this.menuToggle}>
+							<MenuIcon />
 						</IconButton>
 						<Typography variant="h6" className="title">
-							MeCRM
+							<Link to="/">
+								MeCRM
+							</Link>
 						</Typography>
 						{this.state.user &&
 							<React.Fragment>
@@ -87,9 +110,16 @@ class Header extends React.Component {
 				<Drawer
 					anchor="left"
 					open={this.state.menu}
-					onClose={this.toggleMenu}
+					onClose={this.menuToggle}
 				>
-					{drawer}
+					<List>
+						<Link to="/users" onClick={this.menuClose}>
+							<ListItem button key="Users">
+								<ListItemIcon><GroupIcon /></ListItemIcon>
+								<ListItemText primary="Users" />
+							</ListItem>
+						</Link>
+					</List>
 				</Drawer>
 			</div>
 		);
@@ -141,14 +171,6 @@ class Header extends React.Component {
 		// Hide and modals and set the user to false
 		this.setState({
 			"user": false
-		});
-	}
-
-	toggleMenu() {
-
-		// Toggle the state of the menu
-		this.setState({
-			"menu": !this.state.menu
 		});
 	}
 }
