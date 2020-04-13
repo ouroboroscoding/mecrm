@@ -9,18 +9,19 @@
  */
 
 // NPM modules
-import React from 'react';
 import FormatOC from 'format-oc';
 import PropTypes from 'prop-types';
+import React from 'react';
 
 // Material UI
 import Grid from '@material-ui/core/Grid';
+import Typography from '@material-ui/core/Typography';
 
 // Format
-import Node from './Node';
+import NodeComponent from './Node';
 
-// Parent
-export default class Parent extends React.Component {
+// ParentComponent
+export default class ParentComponent extends React.Component {
 
 	constructor(props) {
 
@@ -28,22 +29,25 @@ export default class Parent extends React.Component {
 		super(props);
 
 		// Init state
-		this.state = {
-			"elements": this.generate(),
-			"value": props.value || {}
-		}
+		this.state = this.generateState();
 
 		// Init the field refs
 		this.fields = {};
 	}
 
-	generate() {
+	error(errors) {
+		for(var k in errors) {
+			this.fields[k].error(errors[k]);
+		}
+	}
+
+	generateState() {
 
 		// Init the return
-		let lRet = [];
+		let lElements = [];
 
 		// Get the React special section if there is one
-		let oReact = this.props.node.special('react') || {};
+		let oReact = this.props.parent.special('react') || {};
 
 		// Init the order
 		let lOrder = null;
@@ -60,28 +64,38 @@ export default class Parent extends React.Component {
 
 		// Else, just use the keys
 		else {
-			lOrder = this.props.node.keys();
+			lOrder = this.props.parent.keys();
 		}
 
 		// Go through each node
 		for(let i in lOrder) {
 
 			// Get the node
-			let oChild = this.props.node.get(lOrder[i]);
+			let oChild = this.props.parent.get(lOrder[i]);
 
 			// Check what kind of node it is
 			switch(oChild.class()) {
 				case 'Parent':
-					lRet.push(
+					lElements.push(
 						<Grid key={i} item xs={12}>
-							<Parent ref={el => this.fields[lOrder[i]] = el} name={lOrder[i]} node={oChild} />
+							<ParentComponent
+								ref={el => this.fields[lOrder[i]] = el}
+								name={lOrder[i]}
+								node={oChild}
+								value={this.props.value[lOrder[i]] || {}}
+							/>
 						</Grid>
 					);
 					break;
 				case 'Node':
-					lRet.push(
+					lElements.push(
 						<Grid key={i} item xs={12} sm={6} lg={3}>
-							<Node ref={el => this.fields[lOrder[i]] = el} name={lOrder[i]} node={oChild} />
+							<NodeComponent
+								ref={el => this.fields[lOrder[i]] = el}
+								name={lOrder[i]}
+								node={oChild}
+								value={this.props.value[lOrder[i]] || null}
+							/>
 						</Grid>
 					);
 					break;
@@ -91,12 +105,18 @@ export default class Parent extends React.Component {
 		}
 
 		// Return the list of elements we generated
-		return lRet;
+		return {
+			"title": oReact.title || false,
+			"elements": lElements
+		};
 	}
 
 	render() {
 		return (
 			<Grid container spacing={2} className={"nodeParent _" + this.props.name}>
+				{this.state.title &&
+					<Typography variant="h6">{this.state.title}</Typography>
+				}
 				{this.state.elements}
 			</Grid>
 		);
@@ -106,13 +126,9 @@ export default class Parent extends React.Component {
 		let oRet = {};
 		console.log(this.fields);
 		for(let k in this.fields) {
-			// If the value is optional
-			if(this.props.node.get(k).optional()) {
-				if(this.fields[k].value === '') {
-					continue;
-				}
+			if(this.fields[k].value !== null) {
+				oRet[k] = this.fields[k].value;
 			}
-			oRet[k] = this.fields[k].value;
 		}
 		return oRet;
 	}
@@ -124,10 +140,15 @@ export default class Parent extends React.Component {
 	}
 }
 
-// Force props
-Parent.propTypes = {
+// Valid props
+ParentComponent.propTypes = {
 	"name": PropTypes.string.isRequired,
-	"node": PropTypes.instanceOf(FormatOC.Parent).isRequired,
-	"type": PropTypes.oneOf(['create', 'update']),
+	"parent": PropTypes.instanceOf(FormatOC.Parent).isRequired,
+	"type": PropTypes.oneOf(['insert', 'update']).isRequired,
 	"value": PropTypes.object
+}
+
+// Default props
+ParentComponent.defaultProps = {
+	"value": {}
 }

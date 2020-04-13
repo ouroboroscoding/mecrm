@@ -1,7 +1,7 @@
 /**
- * Services
+ * Rest
  *
- * Handles connecting to and retrieving data from services
+ * Handles connecting to and retrieving data from rest services
  *
  * @author Chris Nasr
  * @copyright OuroborosCoding
@@ -14,7 +14,7 @@ import $ from '../3rd/jquery.ajax';
 // Generic modules
 import Cookies from './cookies.js';
 
-// Services domain
+// Rest services domain
 let _domain = '';
 
 // Default error function
@@ -135,11 +135,11 @@ function store(token) {
 /**
  * Init
  *
- * Initialises the Services modules
+ * Initialises the modules
  *
  * @name init
  * @access public
- * @param string subdomain		The sub-domain services can be reached through
+ * @param string domain		The domain rest services can be reached through
  * @return void
  */
 function init(domain, error) {

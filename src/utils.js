@@ -82,7 +82,7 @@ export default {
 		return oRet;
 	},
 
-	serviceError: function(err) {
+	restError: function(err) {
 
 		// What error is it?
 		switch(err.code) {

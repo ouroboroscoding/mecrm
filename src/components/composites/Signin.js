@@ -22,7 +22,7 @@ import TextField from '@material-ui/core/TextField';
 // Generic modules
 import Events from '../../generic/events';
 import Hash from '../../generic/hash';
-import Services from '../../generic/services';
+import Rest from '../../generic/rest';
 
 // Local modules
 import Loader from '../../loader';
@@ -101,13 +101,13 @@ class Signin extends React.Component {
 		Loader.show();
 
 		// Call the signin
-		Services.create('auth', 'signin', {
+		Rest.create('auth', 'signin', {
 			"email": this.fields.email.value,
 			"passwd": this.fields.passwd.value
 		}).done(res => {
 
 			// If there's an error
-			if(res.error && !Utils.serviceError(res.error)) {
+			if(res.error && !Utils.restError(res.error)) {
 				switch(res.error.code) {
 					case 1001:
 						// Go through each message and mark the error
@@ -135,7 +135,7 @@ class Signin extends React.Component {
 			if(res.data) {
 
 				// Set the session with the service
-				Services.session(res.data.session);
+				Rest.session(res.data.session);
 
 				// Trigger the signedIn event
 				Events.trigger('signedIn', res.data.user)

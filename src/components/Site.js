@@ -19,7 +19,7 @@ import Container from '@material-ui/core/Container';
 // Generic modules
 import Events from '../generic/events';
 import Hash from '../generic/hash';
-import Services from '../generic/services';
+import Rest from '../generic/rest';
 
 // Component modules
 import Header from './composites/Header';
@@ -32,8 +32,8 @@ import Loader from '../loader';
 // css
 import '../sass/site.scss';
 
-// Init the services
-Services.init(process.env.REACT_APP_MEMS_DOMAIN, function(xhr) {
+// Init the rest services
+Rest.init(process.env.REACT_APP_MEMS_DOMAIN, function(xhr) {
 
 	// If we got a 401, let everyone know we signed out
 	if(xhr.status === 401) {
@@ -48,9 +48,9 @@ Services.init(process.env.REACT_APP_MEMS_DOMAIN, function(xhr) {
 });
 
 // If we have a session, fetch the user
-if(Services.session()) {
+if(Rest.session()) {
 	Loader.show();
-	Services.read('auth', 'session', {}).done(res => {
+	Rest.read('auth', 'session', {}).done(res => {
 		Events.trigger('signedIn', res.data);
 	}).always(() => {
 		Loader.hide();

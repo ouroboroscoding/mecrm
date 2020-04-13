@@ -9,6 +9,7 @@
  */
 
 // NPM modules
+import Tree from 'format-oc/Tree'
 import React from 'react';
 
 // Material UI
@@ -22,14 +23,20 @@ import PersonAddIcon from '@material-ui/icons/PersonAdd';
 
 // Generic modules
 //import Events from '../generic/events';
-//import Services from '../generic/services';
+//import Rest from '../generic/rest';
 
 // Local modules
 //import Loader from '../loader';
 //import Utils from '../utils';
 
 // Components
-import User from '../composites/User'
+import TreeComponent from '../format/Tree';
+
+// Definitions
+import UserDef from '../../definitions/auth/user';
+
+// Generate the user Tree
+const UserTree = new Tree(UserDef);
 
 // app
 class Users extends React.Component {
@@ -62,9 +69,12 @@ class Users extends React.Component {
 				</Box>
 				{this.state.createNew &&
 					<Paper>
-						<User
+						<TreeComponent
 							cancel={this.createToggle}
+							insert={{"service": "auth", "noun": "user"}}
 							success={this.createToggle}
+							tree={UserTree}
+							value={{"locale": "en-US"}}
 						/>
 					</Paper>
 				}

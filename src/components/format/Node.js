@@ -34,8 +34,11 @@ class NodeBase extends React.Component {
 		super(props);
 		this.state = {
 			"error": false,
-			"value": 'value' in props ? props.value : null
+			"value": props.value
 		}
+	}
+	error(msg) {
+		this.setState({"error": msg});
 	}
 	get value() {
 		return this.state.value;
@@ -215,6 +218,10 @@ class NodeNumber extends NodeBase {
 		});
 	}
 
+	componentDidMount() {
+
+	}
+
 	render() {
 		let props = {}
 		let minmax = this.props.node.minmax();
@@ -321,7 +328,7 @@ class NodeSelect extends NodeBase {
 		// Update the state
 		this.setState({
 			"error": error,
-			"value": newOpt === null ? '' : newOpt
+			"value": newOpt
 		});
 	}
 
@@ -334,12 +341,7 @@ class NodeSelect extends NodeBase {
 		}
 
 		// Init the option elements
-		let lOpts = [];
-
-		// If the field is optional, add an empty value
-		if(this.props.node.optional()) {
-			lOpts.push(<option key={0} value=''></option>);
-		}
+		let lOpts = [<option key={0} value=''></option>];
 
 		// Add the other options
 		for(let i in lDisplayOptions) {
@@ -388,7 +390,7 @@ class NodeText extends NodeBase {
 	change(event) {
 
 		// Get the new value and check if it's valid
-		let newText = event.target.value;
+		let newText = event.target.value === '' ? null : event.target.value;
 		let error = false;
 		if(!this.props.node.valid(newText)) {
 			error = 'Invalid Value';
@@ -415,7 +417,7 @@ class NodeText extends NodeBase {
 				label={this.props.display.title}
 				onChange={this.change}
 				type="text"
-				value={this.state.value}
+				value={this.state.value === null ? '' : this.state.value}
 				InputLabelProps={{
 					shrink: true,
 				}}
@@ -472,8 +474,8 @@ class NodeTime extends NodeBase {
 	}
 }
 
-// Node
-export default class Node extends React.Component {
+// NodeComponent
+export default class NodeComponent extends React.Component {
 
 	constructor(props) {
 
@@ -481,24 +483,28 @@ export default class Node extends React.Component {
 		super(props);
 
 		// Get the react display properties
-		let oDisplay = props.node.special('react') || {}
+		let oReact = props.node.special('react') || {}
 
 		// If the title is not set
-		if(!('title' in oDisplay)) {
-			oDisplay.title = props.name;
+		if(!('title' in oReact)) {
+			oReact.title = props.name;
 		}
 
 		// Init state
 		this.state = {
-			"display": oDisplay,
-			"type": 'type' in oDisplay ?
-						oDisplay.type :
+			"display": oReact,
+			"type": 'type' in oReact ?
+						oReact.type :
 						this.defaultType(props.node),
-			"value": props.value || ''
+			"value": props.value || null
 		}
 
 		// Child elements
 		this.el = null;
+	}
+
+	error(msg) {
+		this.el.error(msg);
 	}
 
 	// Figure out the element type based on the default values of the node
@@ -585,7 +591,7 @@ export default class Node extends React.Component {
 }
 
 // Force props
-Node.propTypes = {
+NodeComponent.propTypes = {
 	"name": PropTypes.string.isRequired,
 	"node": PropTypes.instanceOf(FNode).isRequired,
 	"value": PropTypes.any

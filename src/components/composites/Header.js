@@ -30,7 +30,7 @@ import GroupIcon from '@material-ui/icons/Group';
 
 // Generic modules
 import Events from '../../generic/events';
-import Services from '../../generic/services';
+import Rest from '../../generic/rest';
 
 // Local modules
 import Loader from '../../loader';
@@ -139,7 +139,7 @@ class Header extends React.Component {
 		Loader.show();
 
 		// Call the signout
-		Services.create('auth', 'signout', {}).done(res => {
+		Rest.create('auth', 'signout', {}).done(res => {
 
 			// If there's an error
 			if(res.error && !Utils.serviceError(res.error)) {
@@ -155,7 +155,7 @@ class Header extends React.Component {
 			if(res.data) {
 
 				// Reset the session
-				Services.session(null);
+				Rest.session(null);
 
 				// Trigger the signedOut event
 				Events.trigger('signedOut');
