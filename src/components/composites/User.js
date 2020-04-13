@@ -9,8 +9,8 @@
  */
 
 // NPM modules
-import React from 'react';
 import PropTypes from 'prop-types';
+import React from 'react';
 import Tree from 'format-oc/Tree';
 
 // Material UI
@@ -37,7 +37,7 @@ import UserDef from '../../definitions/auth/user';
 const UserTree = new Tree(UserDef);
 
 // app
-class User extends React.Component {
+export default class User extends React.Component {
 
 	constructor(props) {
 
@@ -48,6 +48,17 @@ class User extends React.Component {
 		this.state = {
 			"value": props.value || {}
 		}
+
+		// The parent element
+		this.parent = null;
+
+		// Bind methods to instance
+		this.create = this.create.bind(this);
+		this.update = this.update.bind(this);
+	}
+
+	create() {
+		console.log(this.parent.value);
 	}
 
 	render() {
@@ -65,14 +76,26 @@ class User extends React.Component {
 		}
 
 		return (
-			<Box className="user">
+			<Box className="form user">
 				<Typography variant="h5">{text} User</Typography>
-				<Parent name="user" node={UserTree} type={type} value={this.state.value} />
-				<Button variant="contained" color="primary" onClick={submit}>{text}</Button>
+				<Parent ref={el => this.parent = el} name="user" node={UserTree} type={type} value={this.state.value} />
+				<Box className="actions">
+					{this.props.cancel &&
+						<Button variant="contained" color="secondary" onClick={this.props.cancel}>Cancel</Button>
+					}
+					<Button variant="contained" color="primary" onClick={submit}>{text}</Button>
+				</Box>
 			</Box>
 		)
 	}
+
+	update() {
+
+	}
 }
 
-// Export component
-export default User;
+// Force props
+User.propTypes = {
+	"cancel": PropTypes.func,
+	"success": PropTypes.func
+}

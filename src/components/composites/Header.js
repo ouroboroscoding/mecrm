@@ -89,7 +89,7 @@ class Header extends React.Component {
 	render() {
 		return (
 			<div id="header">
-				<AppBar position="static">
+				<AppBar position="fixed">
 					<Toolbar>
 						<IconButton edge="start" color="inherit" aria-label="menu" onClick={this.menuToggle}>
 							<MenuIcon />

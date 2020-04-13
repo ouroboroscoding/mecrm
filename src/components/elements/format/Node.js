@@ -47,6 +47,7 @@ class NodeBase extends React.Component {
 
 // Force props
 NodeBase.propTypes = {
+	"display": PropTypes.object.isRequired,
 	"name": PropTypes.string.isRequired,
 	"node": PropTypes.instanceOf(FNode).isRequired,
 	"value": PropTypes.any
@@ -79,7 +80,7 @@ class NodeBool extends NodeBase {
 							checked={this.state.value}
 							onChange={this.change}
 						/>}
-				label={this.props.node.special('title') || this.props.name}
+				label={this.props.display.title}
 			/>
 		);
 	}
@@ -120,7 +121,7 @@ class NodeDate extends NodeBase {
 			<TextField
 				error={this.state.error !== false}
 				helperText={this.state.error}
-				label={this.props.node.special('title') || this.props.name}
+				label={this.props.display.title}
 				onChange={this.change}
 				type="date"
 				value={this.state.value}
@@ -172,7 +173,7 @@ class NodeDatetime extends NodeBase {
 			<TextField
 				error={this.state.error !== false}
 				helperText={this.state.error}
-				label={this.props.node.special('title') || this.props.name}
+				label={this.props.display.title}
 				onChange={this.change}
 				type="datetime-local"
 				value={this.state.value}
@@ -228,7 +229,7 @@ class NodeNumber extends NodeBase {
 			<TextField
 				error={this.state.error !== false}
 				helperText={this.state.error}
-				label={this.props.node.special('title') || this.props.name}
+				label={this.props.display.title}
 				onChange={this.change}
 				type="number"
 				value={this.state.value}
@@ -236,6 +237,59 @@ class NodeNumber extends NodeBase {
 					shrink: true,
 				}}
 				{...props}
+			/>
+		);
+	}
+}
+
+/**
+ * Node Password
+ *
+ * Handles values that are strings or string-like
+ *
+ * @extends NodeBase
+ */
+class NodePassword extends NodeBase {
+
+	constructor(props) {
+		super(props);
+
+		// If there's a regex, override the node
+		if('regex' in props.display) {
+			props.node.regex(props.display.regex);
+		}
+
+		this.change = this.change.bind(this);
+	}
+
+	change(event) {
+
+		// Get the new value and check if it's valid
+		let newPassword = event.target.value;
+		let error = false;
+		if(!this.props.node.valid(newPassword)) {
+			error = 'Invalid Value';
+		}
+
+		// Update the state
+		this.setState({
+			"error": error,
+			"value": newPassword
+		});
+	}
+
+	render() {
+		return (
+			<TextField
+				error={this.state.error !== false}
+				helperText={this.state.error}
+				label={this.props.display.title}
+				onChange={this.change}
+				type="password"
+				value={this.state.value}
+				InputLabelProps={{
+					shrink: true,
+				}}
 			/>
 		);
 	}
@@ -258,7 +312,7 @@ class NodeSelect extends NodeBase {
 	change(event) {
 
 		// Get the new value with the empty seconds and check if it's valid
-		let newOpt = event.target.value;
+		let newOpt = event.target.value === '' ? null : event.target.value;
 		let error = false;
 		if(!this.props.node.valid(newOpt)) {
 			error = 'Invalid Selection';
@@ -267,18 +321,17 @@ class NodeSelect extends NodeBase {
 		// Update the state
 		this.setState({
 			"error": error,
-			"value": newOpt
+			"value": newOpt === null ? '' : newOpt
 		});
 	}
 
 	render() {
 
 		// If we have display options
-		let lDisplayOptions = this.props.node.special('display_options');
+		let lDisplayOptions = this.props.display.options;
 		if(!lDisplayOptions) {
 			lDisplayOptions = this.props.node.options().map(s => [s, s]);
 		}
-		console.log(lDisplayOptions);
 
 		// Init the option elements
 		let lOpts = [];
@@ -294,17 +347,11 @@ class NodeSelect extends NodeBase {
 		}
 
 		return (
-			<FormControl>
-				<InputLabel
-					error={this.state.error !== false}
-					htmlFor={this.props.name + "-native-select"}
-				>
-					{this.props.node.special('title') || this.props.name}
+			<FormControl error={this.state.error !== false}>
+				<InputLabel className="MuiInputLabel-shrink MuiFormLabel-filled">
+					{this.props.display.title}
 				</InputLabel>
 				<NativeSelect
-					inputProps={{
-						"id": this.props.name + "-native-select"
-					}}
 					onChange={this.change}
 					value={this.state.value}
 				>
@@ -329,6 +376,12 @@ class NodeText extends NodeBase {
 
 	constructor(props) {
 		super(props);
+
+		// If there's a regex, override the node
+		if('regex' in props.display) {
+			props.node.regex(props.display.regex);
+		}
+
 		this.change = this.change.bind(this);
 	}
 
@@ -359,7 +412,7 @@ class NodeText extends NodeBase {
 			<TextField
 				error={this.state.error !== false}
 				helperText={this.state.error}
-				label={this.props.node.special('title') || this.props.name}
+				label={this.props.display.title}
 				onChange={this.change}
 				type="text"
 				value={this.state.value}
@@ -407,7 +460,7 @@ class NodeTime extends NodeBase {
 			<TextField
 				error={this.state.error !== false}
 				helperText={this.state.error}
-				label={this.props.node.special('title') || this.props.name}
+				label={this.props.display.title}
 				onChange={this.change}
 				type="time"
 				value={this.state.value}
@@ -427,16 +480,25 @@ export default class Node extends React.Component {
 		// Call parent
 		super(props);
 
-		// Check for a display type
-		let sType = props.node.special('display') || this.defaultType(props.node);
+		// Get the react display properties
+		let oDisplay = props.node.special('react') || {}
+
+		// If the title is not set
+		if(!('title' in oDisplay)) {
+			oDisplay.title = props.name;
+		}
 
 		// Init state
 		this.state = {
-			"name": props.name,
-			"node": props.node,
-			"type": sType,
+			"display": oDisplay,
+			"type": 'type' in oDisplay ?
+						oDisplay.type :
+						this.defaultType(props.node),
 			"value": props.value || ''
 		}
+
+		// Child elements
+		this.el = null;
 	}
 
 	// Figure out the element type based on the default values of the node
@@ -494,6 +556,7 @@ export default class Node extends React.Component {
 			case 'date': ElName = NodeDate; break;
 			case 'datetime': ElName = NodeDatetime; break;
 			case 'number': ElName = NodeNumber; break;
+			case 'password': ElName = NodePassword; break;
 			case 'select': ElName = NodeSelect; break;
 			case 'text': ElName = NodeText; break;
 			case 'time': ElName = NodeTime; break;
@@ -503,11 +566,21 @@ export default class Node extends React.Component {
 
 		return (
 			<ElName
+				display={this.state.display}
 				name={this.props.name}
 				node={this.props.node}
+				ref={el => this.el = el}
 				value={this.state.value}
 			/>
 		);
+	}
+
+	get value() {
+		return this.el.value;
+	}
+
+	set value(val) {
+		this.el.value = val;
 	}
 }
 

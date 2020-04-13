@@ -62,7 +62,10 @@ class Users extends React.Component {
 				</Box>
 				{this.state.createNew &&
 					<Paper>
-						<User />
+						<User
+							cancel={this.createToggle}
+							success={this.createToggle}
+						/>
 					</Paper>
 				}
 				<Grid container spacing={3}>

@@ -14,7 +14,7 @@ import FormatOC from 'format-oc';
 import PropTypes from 'prop-types';
 
 // Material UI
-import Box from '@material-ui/core/Box';
+import Grid from '@material-ui/core/Grid';
 
 // Format
 import Node from './Node';
@@ -32,6 +32,9 @@ export default class Parent extends React.Component {
 			"elements": this.generate(),
 			"value": props.value || {}
 		}
+
+		// Init the field refs
+		this.fields = {};
 	}
 
 	generate() {
@@ -69,10 +72,18 @@ export default class Parent extends React.Component {
 			// Check what kind of node it is
 			switch(oChild.class()) {
 				case 'Parent':
-					lRet.push(<Parent key={i} name={lOrder[i]} node={oChild} />);
+					lRet.push(
+						<Grid key={i} item xs={12}>
+							<Parent ref={el => this.fields[lOrder[i]] = el} name={lOrder[i]} node={oChild} />
+						</Grid>
+					);
 					break;
 				case 'Node':
-					lRet.push(<Node key={i} name={lOrder[i]} node={oChild} />);
+					lRet.push(
+						<Grid key={i} item xs={12} sm={6} lg={3}>
+							<Node ref={el => this.fields[lOrder[i]] = el} name={lOrder[i]} node={oChild} />
+						</Grid>
+					);
 					break;
 				default:
 					throw new Error('Invalid Node type in parent of child: ' + lOrder[i]);
@@ -85,10 +96,31 @@ export default class Parent extends React.Component {
 
 	render() {
 		return (
-			<Box className={"nodeParent _" + this.props.name}>
+			<Grid container spacing={2} className={"nodeParent _" + this.props.name}>
 				{this.state.elements}
-			</Box>
+			</Grid>
 		);
+	}
+
+	get value() {
+		let oRet = {};
+		console.log(this.fields);
+		for(let k in this.fields) {
+			// If the value is optional
+			if(this.props.node.get(k).optional()) {
+				if(this.fields[k].value === '') {
+					continue;
+				}
+			}
+			oRet[k] = this.fields[k].value;
+		}
+		return oRet;
+	}
+
+	set value(val) {
+		for(let k in val) {
+			this.fields[k].value = val[k];
+		}
 	}
 }
 
