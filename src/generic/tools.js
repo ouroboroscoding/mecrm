@@ -3,7 +3,7 @@
  *
  * Useful functions that belong to any specific module
  *
- * @author Chris Nasr
+ * @author Chris Nasr <ouroboroscode@gmail.com>
  * @copyright OuroborosCoding
  * @created 2018-11-25
  */

@@ -3,7 +3,7 @@
  *
  * Shows a loading graphic during requests/startup
  *
- * @author Chris Nasr
+ * @author Chris Nasr <ouroboroscode@gmail.com>
  * @copyright OuroborosCoding
  * @created 2018-11-24
  */

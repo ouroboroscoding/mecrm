@@ -3,7 +3,7 @@
  *
  * Simplifies using a websocket
  *
- * @author Chris Nasr
+ * @author Chris Nasr <ouroboroscode@gmail.com>
  * @copyright OuroborosCoding
  * @created 2017-05-17
  */

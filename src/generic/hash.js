@@ -3,7 +3,7 @@
  *
  * JS Library to manage hash values
  *
- * @author Chris Nasr
+ * @author Chris Nasr <ouroboroscode@gmail.com>
  * @copyright OuroborosCoding
  * @created 2018-12-09
  */
@@ -12,7 +12,7 @@
 const Tools = require('./tools.js');
 
 // name regex
-const nameRE = /^[a-z]+$/;
+const nameRE = /^[a-zA-Z]+$/;
 
 // Callbacks
 const watches = {};
@@ -117,7 +117,7 @@ function init() {
  * @param string default_	The value to return if the name isn't found
  * @return str
  */
-function get(name, default_) {
+function get(name, default_=null) {
 
 	// If the name is invalid
 	if(!nameRE.test(name)) {
@@ -185,7 +185,7 @@ function set(name, value) {
 
 	// Go through each name
 	for(let k in copy) {
-		temp.push(k + '=' + encodeURIComponent(copy[k]));
+		temp.push(k + '=' + copy[k]);
 	}
 
 	// Reset the window location hash

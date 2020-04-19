@@ -32,7 +32,7 @@ a, a:active, a:hover, a:link, a:visited {
 	cursor: pointer;
 }
 
-.form {
+.form, .search {
 
 	.actions {
 		flex: 0 0 auto;
@@ -45,6 +45,11 @@ a, a:active, a:hover, a:link, a:visited {
 			margin-left: 10px;
 		}
 	}
+}
+
+.MuiPaper-root.padded {
+	margin-bottom: 20px;
+	padding: 10px;
 }
 
 .MuiTypography-h1, .MuiTypography-h2, .MuiTypography-h3,
@@ -61,5 +66,13 @@ a, a:active, a:hover, a:link, a:visited {
 
 	.icon {
 		font-size: 3.5rem;
+	}
+}
+
+.MuiTableContainer-root.results {
+	.MuiTableCell-root.actions {
+		.MuiSvgIcon-root {
+			margin-right: 10px;
+		}
 	}
 }

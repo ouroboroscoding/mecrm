@@ -3,7 +3,7 @@
  *
  * Handles groups of FormatOC nodes
  *
- * @author Chris Nasr
+ * @author Chris Nasr <bast@maleexcel.com>
  * @copyright MaleExcelMedical
  * @created 2020-04-10
  */
@@ -17,8 +17,11 @@ import React from 'react';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 
-// Format
+// Components
 import NodeComponent from './Node';
+
+// Generic modules
+import Events from '../../generic/events';
 
 // ParentComponent
 export default class ParentComponent extends React.Component {
@@ -37,7 +40,11 @@ export default class ParentComponent extends React.Component {
 
 	error(errors) {
 		for(var k in errors) {
-			this.fields[k].error(errors[k]);
+			if(k in this.fields) {
+				this.fields[k].error(errors[k]);
+			} else {
+				Events.trigger('error', 'Field not found error: ' + errors[k] + ' (' + k + ')');
+			}
 		}
 	}
 
@@ -83,6 +90,7 @@ export default class ParentComponent extends React.Component {
 								name={lOrder[i]}
 								node={oChild}
 								value={this.props.value[lOrder[i]] || {}}
+								validation={this.props.validation}
 							/>
 						</Grid>
 					);
@@ -95,6 +103,7 @@ export default class ParentComponent extends React.Component {
 								name={lOrder[i]}
 								node={oChild}
 								value={this.props.value[lOrder[i]] || null}
+								validation={this.props.validation}
 							/>
 						</Grid>
 					);
@@ -123,8 +132,7 @@ export default class ParentComponent extends React.Component {
 	}
 
 	get value() {
-		let oRet = {};
-		console.log(this.fields);
+		let oRet = this.props.value;
 		for(let k in this.fields) {
 			if(this.fields[k].value !== null) {
 				oRet[k] = this.fields[k].value;
@@ -144,11 +152,13 @@ export default class ParentComponent extends React.Component {
 ParentComponent.propTypes = {
 	"name": PropTypes.string.isRequired,
 	"parent": PropTypes.instanceOf(FormatOC.Parent).isRequired,
-	"type": PropTypes.oneOf(['insert', 'update']).isRequired,
-	"value": PropTypes.object
+	"type": PropTypes.oneOf(['insert', 'search', 'update']).isRequired,
+	"value": PropTypes.object,
+	"validation": PropTypes.bool
 }
 
 // Default props
 ParentComponent.defaultProps = {
-	"value": {}
+	"value": {},
+	"validation": true
 }

@@ -1,9 +1,9 @@
 /**
  * Format Tree
  *
- * Handles
+ * Handles top level Parents
  *
- * @author Chris Nasr
+ * @author Chris Nasr <bast@maleexcel.com>
  * @copyright MaleExcelMedical
  * @created 2020-04-10
  */
@@ -26,7 +26,6 @@ import Events from '../../generic/events';
 import Rest from '../../generic/rest';
 
 // Local
-import Loader from '../../loader';
 import Utils from '../../utils';
 
 // TreeComponent
@@ -38,35 +37,20 @@ export default class TreeComponent extends React.Component {
 		super(props);
 
 		// Get the display options
-		let oDisplay = props.tree.special('react') || {};
+		let oReact = props.tree.special('react') || {};
 
 		// If there's no primary, assume '_id'
-		if(!('primary' in oDisplay)) {
-			oDisplay.primary = '_id';
+		if(!('primary' in oReact)) {
+			oReact.primary = '_id';
 		}
 
 		// Set the initial state
 		this.state = {
+			"key": ('value' in props && oReact.primary in props.value) ?
+						props.value[oReact.primary] : null,
+			"primary": oReact.primary,
 			"name": props.tree._name,
-			"type": (!('value' in props) || !(oDisplay.primary in props.value)) ?
-					'insert' : 'update'
-		}
-
-		// If the type is insert make sure we have a proper insert prop
-		if(this.state.type === 'insert') {
-			if(!('insert' in props)) {
-				throw new Error('Format/Tree requires insert prop if type is insert');
-			}
-			if(!('service' in props.insert) || !('noun' in props.insert)) {
-				throw new Error('Format/Tree.insert requires both service and noun');
-			}
-		} else if(this.state.type === 'update') {
-			if(!('update' in props)) {
-				throw new Error('Format/Tree requires update prop if type is update');
-			}
-			if(!('service' in props.update) || !('noun' in props.update)) {
-				throw new Error('Format/Tree.update requires both service and noun');
-			}
+			"type": props['type']
 		}
 
 		// Init the parent
@@ -89,19 +73,16 @@ export default class TreeComponent extends React.Component {
 			return;
 		}
 
-		// Show the loader
-		Loader.show();
-
 		// Send the data to the service via rest
-		Rest.create(this.props.insert.service,
-					this.props.insert.noun,
+		Rest.create(this.props.service,
+					this.props.noun,
 					oValues
 		).done(res => {
 
 			// If there's an error
 			if(res.error && !Utils.restError(res.error)) {
 				if(res.error.code === 1001) {
-					this.parent.errors(res.error.msg);
+					this.parent.error(res.error.msg);
 				} else if(res.error.code in this.props.errors) {
 					Events.trigger('error', this.props.errors[res.error.code]);
 				}
@@ -116,16 +97,13 @@ export default class TreeComponent extends React.Component {
 			if(res.data) {
 
 				// Show the popup
-				Events.trigger('success', 'Created new ' + this.props.name);
+				Events.trigger('success', 'Created new ' + this.state.name);
 
 				// If there's a success callback, call it with the returned data
 				if(this.props.success) {
 					this.props.success(res.data);
 				}
 			}
-
-		}).always(() => {
-			Loader.hide();
 		});
 	}
 
@@ -173,19 +151,19 @@ export default class TreeComponent extends React.Component {
 			return;
 		}
 
-		// Show the loader
-		Loader.show();
+		// Add the primary key
+		oValues[this.state.primary] = this.state.key;
 
 		// Send the data to the service via rest
-		Rest.create(this.props.update.service,
-					this.props.update.noun,
+		Rest.update(this.props.service,
+					this.props.noun,
 					oValues
 		).done(res => {
 
 			// If there's an error
 			if(res.error && !Utils.restError(res.error)) {
 				if(res.error.code === 1001) {
-					this.parent.errors(res.error.msg);
+					this.parent.error(res.error.msg);
 				} else if(res.error.code in this.props.errors) {
 					Events.trigger('error', this.props.errors[res.error.code]);
 				}
@@ -200,16 +178,13 @@ export default class TreeComponent extends React.Component {
 			if(res.data) {
 
 				// Show the popup
-				Events.trigger('success', 'Saved ' + this.props.name);
+				Events.trigger('success', 'Saved ' + this.state.name);
 
 				// If there's a success callback, call it with the returned data
 				if(this.props.success) {
 					this.props.success(res.data);
 				}
 			}
-
-		}).always(() => {
-			Loader.hide();
 		});
 	}
 }
@@ -218,10 +193,11 @@ export default class TreeComponent extends React.Component {
 TreeComponent.propTypes = {
 	"cancel": PropTypes.func,
 	"errors": PropTypes.object,
-	"insert": PropTypes.object,
+	"noun": PropTypes.string.isRequired,
+	"service": PropTypes.string.isRequired,
 	"success": PropTypes.func,
 	"tree": PropTypes.instanceOf(FormatOC.Tree).isRequired,
-	"update": PropTypes.object,
+	"type": PropTypes.oneOf(['insert', 'update']).isRequired,
 	"value": PropTypes.object
 }
 

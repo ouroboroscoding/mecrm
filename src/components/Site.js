@@ -33,7 +33,7 @@ import Loader from '../loader';
 import '../sass/site.scss';
 
 // Init the rest services
-Rest.init(process.env.REACT_APP_MEMS_DOMAIN, function(xhr) {
+Rest.init(process.env.REACT_APP_MEMS_DOMAIN, xhr => {
 
 	// If we got a 401, let everyone know we signed out
 	if(xhr.status === 401) {
@@ -45,15 +45,18 @@ Rest.init(process.env.REACT_APP_MEMS_DOMAIN, function(xhr) {
 			': ' + xhr.statusText +
 			' (' + xhr.status + ')');
 	}
+}, (method, url, data) => {
+	Loader.show();
+}, (method, url, data) => {
+	Loader.hide();
 });
 
 // If we have a session, fetch the user
 if(Rest.session()) {
-	Loader.show();
 	Rest.read('auth', 'session', {}).done(res => {
-		Events.trigger('signedIn', res.data);
-	}).always(() => {
-		Loader.hide();
+		Rest.read('auth', 'user', {}).done(res => {
+			Events.trigger('signedIn', res.data);
+		});
 	});
 }
 

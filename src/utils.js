@@ -3,7 +3,7 @@
  *
  * Shared utilities
  *
- * @author Chris Nasr
+ * @author Chris Nasr <bast@maleexcel.com>
  * @copyright MaleExcelMedical
  * @created 2020-04-04
  */

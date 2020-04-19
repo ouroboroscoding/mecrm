@@ -3,7 +3,7 @@
  *
  * Handles sign in modal
  *
- * @author Chris Nasr
+ * @author Chris Nasr <bast@maleexcel.com>
  * @copyright MaleExcelMedical
  * @created 2020-04-04
  */
@@ -25,7 +25,6 @@ import Hash from '../../generic/hash';
 import Rest from '../../generic/rest';
 
 // Local modules
-import Loader from '../../loader';
 import Utils from '../../utils';
 
 // Sign In
@@ -51,6 +50,33 @@ class Signin extends React.Component {
 
 		// Bind methods to this instance
 		this.signin = this.signin.bind(this);
+	}
+
+	fetchUser() {
+
+		// Fetch the user data
+		Rest.read('auth', 'user', {}).done(res => {
+
+			// If there's an error
+			if(res.error && !Utils.restError(res.error)) {
+				Events.trigger('error', JSON.stringify(res.error));
+			}
+
+			// If there's a warning
+			if(res.warning) {
+				Events.trigger('warning', JSON.stringify(res.warning));
+			}
+
+			// If there's data
+			if(res.data) {
+
+				// Welcome user
+				Events.trigger('success', 'Welcome ' + res.data.firstName);
+
+				// Trigger the signedIn event
+				Events.trigger('signedIn', res.data);
+			}
+		});
 	}
 
 	render() {
@@ -97,9 +123,6 @@ class Signin extends React.Component {
 
 	signin(ev) {
 
-		// Show loader
-		Loader.show();
-
 		// Call the signin
 		Rest.create('auth', 'signin', {
 			"email": this.fields.email.value,
@@ -137,13 +160,10 @@ class Signin extends React.Component {
 				// Set the session with the service
 				Rest.session(res.data.session);
 
-				// Trigger the signedIn event
-				Events.trigger('signedIn', res.data.user)
+				// Fetch the user info
+				this.fetchUser();
 			}
 
-		}).always(() => {
-			// Hide loader
-			Loader.hide();
 		});
 	}
 }

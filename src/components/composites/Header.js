@@ -3,7 +3,7 @@
  *
  * Handles app bar and drawer
  *
- * @author Chris Nasr
+ * @author Chris Nasr <bast@maleexcel.com>
  * @copyright MaleExcelMedical
  * @created 2020-04-04
  */

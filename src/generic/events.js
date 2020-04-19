@@ -3,7 +3,7 @@
  *
  * Event model for non UI events
  *
- * @author Chris Nasr
+ * @author Chris Nasr <ouroboroscode@gmail.com>
  * @copyright OuroborosCoding
  * @created 2018-11-24
  */

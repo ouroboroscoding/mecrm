@@ -3,7 +3,7 @@
  *
  * Handles a single FormatOC node
  *
- * @author Chris Nasr
+ * @author Chris Nasr <bast@maleexcel.com>
  * @copyright MaleExcelMedical
  * @created 2020-04-10
  */
@@ -41,7 +41,7 @@ class NodeBase extends React.Component {
 		this.setState({"error": msg});
 	}
 	get value() {
-		return this.state.value;
+		return this.state.value === '' ? null : this.state.value;
 	}
 	set value(val) {
 		this.setState({"value": val});
@@ -105,17 +105,16 @@ class NodeDate extends NodeBase {
 
 	change(event) {
 
-		// Get the new date and check if it's valid
-		let newDate = event.target.value;
+		// Check the new value is valid
 		let error = false;
-		if(!this.props.node.valid(newDate)) {
+		if(this.props.validation && !this.props.node.valid(event.target.value)) {
 			error = 'Invalid Date';
 		}
 
 		// Update the state
 		this.setState({
 			"error": error,
-			"value": event.target.newDate
+			"value": event.target.value
 		});
 	}
 
@@ -160,7 +159,7 @@ class NodeDatetime extends NodeBase {
 
 		// Check if it's valid
 		let error = false;
-		if(!this.props.node.valid(newDatetime)) {
+		if(this.props.validation && !this.props.node.valid(newDatetime)) {
 			error = 'Invalid Date/Time';
 		}
 
@@ -189,6 +188,34 @@ class NodeDatetime extends NodeBase {
 }
 
 /**
+ * Node Hidden
+ *
+ * Handles values that aren't visible
+ *
+ * @extends NodeBase
+ */
+class NodeHidden extends NodeBase {
+
+	render() {
+		let props = {}
+		let minmax = this.props.node.minmax();
+		if(minmax.minimum) {
+			props.min = minmax.minimum;
+		}
+		if(minmax.maximum) {
+			props.max = minmax.maximum;
+		}
+
+		return (
+			<input
+				type="hidden"
+				value={this.state.value}
+			/>
+		);
+	}
+}
+
+/**
  * Node Number
  *
  * Handles values that represent numbers (ints, floats, decimal)
@@ -204,22 +231,17 @@ class NodeNumber extends NodeBase {
 
 	change(event) {
 
-		// Get the new value and check if it's valid
-		let newNumber = event.target.value;
+		// Check the new value is valid
 		let error = false;
-		if(!this.props.node.valid(newNumber)) {
+		if(this.props.validation && !this.props.node.valid(event.target.value)) {
 			error = 'Invalid Value';
 		}
 
 		// Update the state
 		this.setState({
 			"error": error,
-			"value": newNumber
+			"value": event.target.value
 		});
-	}
-
-	componentDidMount() {
-
 	}
 
 	render() {
@@ -271,17 +293,16 @@ class NodePassword extends NodeBase {
 
 	change(event) {
 
-		// Get the new value and check if it's valid
-		let newPassword = event.target.value;
+		// Check the new value is valid
 		let error = false;
-		if(!this.props.node.valid(newPassword)) {
+		if(this.props.validation && !this.props.node.valid(event.target.value)) {
 			error = 'Invalid Value';
 		}
 
 		// Update the state
 		this.setState({
 			"error": error,
-			"value": newPassword
+			"value": event.target.value
 		});
 	}
 
@@ -318,17 +339,17 @@ class NodeSelect extends NodeBase {
 
 	change(event) {
 
-		// Get the new value with the empty seconds and check if it's valid
-		let newOpt = event.target.value === '' ? null : event.target.value;
+		// Check the new value is valid
 		let error = false;
-		if(!this.props.node.valid(newOpt)) {
+		if(this.props.validation &&
+			!this.props.node.valid(event.target.value === '' ? null : event.target.value)) {
 			error = 'Invalid Selection';
 		}
 
 		// Update the state
 		this.setState({
 			"error": error,
-			"value": newOpt
+			"value": event.target.value
 		});
 	}
 
@@ -389,17 +410,17 @@ class NodeText extends NodeBase {
 
 	change(event) {
 
-		// Get the new value and check if it's valid
-		let newText = event.target.value === '' ? null : event.target.value;
+		// Check the new value is valid
 		let error = false;
-		if(!this.props.node.valid(newText)) {
+		if(this.props.validation &&
+			!this.props.node.valid(event.target.value === '' ? null : event.target.value)) {
 			error = 'Invalid Value';
 		}
 
 		// Update the state
 		this.setState({
 			"error": error,
-			"value": newText
+			"value": event.target.value
 		});
 	}
 
@@ -443,10 +464,11 @@ class NodeTime extends NodeBase {
 
 	change(event) {
 
-		// Get the new value with the empty seconds and check if it's valid
+		// Check the new value is valid
 		let newTime = event.target.value + ':00';
 		let error = false;
-		if(!this.props.node.valid(newTime)) {
+
+		if(this.props.validation && !this.props.node.valid(newTime)) {
 			error = 'Invalid Time';
 		}
 
@@ -561,6 +583,7 @@ export default class NodeComponent extends React.Component {
 			case 'bool': ElName = NodeBool; break;
 			case 'date': ElName = NodeDate; break;
 			case 'datetime': ElName = NodeDatetime; break;
+			case 'hidden': ElName = NodeHidden; break;
 			case 'number': ElName = NodeNumber; break;
 			case 'password': ElName = NodePassword; break;
 			case 'select': ElName = NodeSelect; break;
@@ -576,7 +599,8 @@ export default class NodeComponent extends React.Component {
 				name={this.props.name}
 				node={this.props.node}
 				ref={el => this.el = el}
-				value={this.state.value}
+				value={this.state.value || ''}
+				validation={this.props.validation}
 			/>
 		);
 	}
@@ -594,5 +618,11 @@ export default class NodeComponent extends React.Component {
 NodeComponent.propTypes = {
 	"name": PropTypes.string.isRequired,
 	"node": PropTypes.instanceOf(FNode).isRequired,
-	"value": PropTypes.any
+	"value": PropTypes.any,
+	"validation": PropTypes.bool
+}
+
+// Default props
+NodeComponent.defaultProps = {
+	"validation": true
 }

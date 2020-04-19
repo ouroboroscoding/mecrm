@@ -3,7 +3,7 @@
  *
  * Handles connecting to and retrieving data from rest services
  *
- * @author Chris Nasr
+ * @author Chris Nasr <ouroboroscode@gmail.com>
  * @copyright OuroborosCoding
  * @created 2018-11-24
  */
@@ -19,6 +19,10 @@ let _domain = '';
 
 // Default error function
 let _error = function() {}
+
+// Before/After callbacks
+let _before = null;
+let _after = null
 
 /**
  * Clear
@@ -53,6 +57,11 @@ function clear() {
  */
 function request(method, url, data) {
 
+	// If we have a before callback
+	if(_before) {
+		_before(method, url, data);
+	}
+
 	// Generate the ajax config
 	let oConfig = {
 
@@ -70,6 +79,14 @@ function request(method, url, data) {
 
 		// Looking for JSON responses
 		"contentType": "application/json; charset=utf-8",
+
+		"complete": function(res) {
+
+			// If we have an after callback
+			if(_after) {
+				_after(method, url, data);
+			}
+		},
 
 		// On error
 		"error": function(xhr, status, error) {
@@ -140,9 +157,12 @@ function store(token) {
  * @name init
  * @access public
  * @param string domain		The domain rest services can be reached through
+ * @param function error	Callback for when http errors occur
+ * @param function before	Optional callback to run before any request
+ * @param function after	Optional callback to run after any request
  * @return void
  */
-function init(domain, error) {
+function init(domain, error=null, before=null, after=null) {
 
 	// Store the domain
 	_domain = 'https://' + domain + '/';
@@ -163,6 +183,18 @@ function init(domain, error) {
 	// If an error was passed
 	if(typeof error !== 'undefined') {
 		_error = error;
+	}
+
+	// Store before/after
+	if(typeof before === 'function') {
+		_before = before;
+	} else {
+		console.log('Rest.init before must be a function');
+	}
+	if(typeof after === 'function') {
+		_after = after;
+	} else {
+		console.log('Rest.init after must be a function');
 	}
 }
 
