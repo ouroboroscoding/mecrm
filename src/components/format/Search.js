@@ -112,6 +112,8 @@ export default class SearchComponent extends React.Component {
 					this.parent.errors(res.error.msg);
 				} else if(res.error.code in this.props.errors) {
 					Events.trigger('error', this.props.errors[res.error.code]);
+				} else {
+					Events.trigger('error', JSON.stringify(res.error.msg));
 				}
 			}
 
@@ -137,6 +139,7 @@ export default class SearchComponent extends React.Component {
 				<Parent
 					ref={el => this.parent = el}
 					name="user"
+					onEnter={this.query}
 					parent={this.props.tree}
 					type="search"
 					validation={false}

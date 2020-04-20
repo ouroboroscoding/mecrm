@@ -63,15 +63,15 @@ export default class TreeComponent extends React.Component {
 
 	insert() {
 
-		// Fetch the values from the parent
-		let oValues = this.parent.value;
-
-		// Make sure they're valid
-		if(!this.props.tree.valid(oValues, false)) {
+		// Make sure each child of the parent is valid
+		if(!this.parent.valid()) {
 			Events.trigger('error', 'Please fix invalid data');
 			this.parent.error(Utils.errorTree(this.props.tree.validation_failures));
 			return;
 		}
+
+		// Fetch the values from the parent
+		let oValues = this.parent.value;
 
 		// Send the data to the service via rest
 		Rest.create(this.props.service,
@@ -85,6 +85,8 @@ export default class TreeComponent extends React.Component {
 					this.parent.error(res.error.msg);
 				} else if(res.error.code in this.props.errors) {
 					Events.trigger('error', this.props.errors[res.error.code]);
+				} else {
+					Events.trigger('error', JSON.stringify(res.error.msg));
 				}
 			}
 
@@ -125,6 +127,7 @@ export default class TreeComponent extends React.Component {
 				<Parent
 					ref={el => this.parent = el}
 					name="user"
+					onEnter={callback}
 					parent={this.props.tree}
 					type={this.state.type}
 					value={this.props.value}
@@ -141,15 +144,15 @@ export default class TreeComponent extends React.Component {
 
 	update() {
 
-		// Fetch the values from the parent
-		let oValues = this.parent.value;
-
-		// Make sure they're valid
-		if(!this.props.tree.valid(oValues, false)) {
+		// Make sure each child of the parent is valid
+		if(!this.parent.valid()) {
 			Events.trigger('error', 'Please fix invalid data');
 			this.parent.error(Utils.errorTree(this.props.tree.validation_failures));
 			return;
 		}
+
+		// Fetch the values from the parent
+		let oValues = this.parent.value;
 
 		// Add the primary key
 		oValues[this.state.primary] = this.state.key;
@@ -166,6 +169,8 @@ export default class TreeComponent extends React.Component {
 					this.parent.error(res.error.msg);
 				} else if(res.error.code in this.props.errors) {
 					Events.trigger('error', this.props.errors[res.error.code]);
+				} else {
+					Events.trigger('error', JSON.stringify(res.error.msg));
 				}
 			}
 
@@ -182,7 +187,7 @@ export default class TreeComponent extends React.Component {
 
 				// If there's a success callback, call it with the returned data
 				if(this.props.success) {
-					this.props.success(res.data);
+					this.props.success(oValues);
 				}
 			}
 		});

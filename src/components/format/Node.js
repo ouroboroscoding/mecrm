@@ -36,9 +36,15 @@ class NodeBase extends React.Component {
 			"error": false,
 			"value": props.value
 		}
+		this.keyPressed = this.keyPressed.bind(this);
 	}
 	error(msg) {
 		this.setState({"error": msg});
+	}
+	keyPressed(event) {
+		if(event.key === 'Enter') {
+			this.props.onEnter();
+		}
 	}
 	get value() {
 		return this.state.value === '' ? null : this.state.value;
@@ -53,6 +59,7 @@ NodeBase.propTypes = {
 	"display": PropTypes.object.isRequired,
 	"name": PropTypes.string.isRequired,
 	"node": PropTypes.instanceOf(FNode).isRequired,
+	"onEnter": PropTypes.func.isRequired,
 	"value": PropTypes.any
 }
 
@@ -123,6 +130,7 @@ class NodeDate extends NodeBase {
 			<TextField
 				error={this.state.error !== false}
 				helperText={this.state.error}
+				onKeyPress={this.keyPressed}
 				label={this.props.display.title}
 				onChange={this.change}
 				type="date"
@@ -175,6 +183,7 @@ class NodeDatetime extends NodeBase {
 			<TextField
 				error={this.state.error !== false}
 				helperText={this.state.error}
+				onKeyPress={this.keyPressed}
 				label={this.props.display.title}
 				onChange={this.change}
 				type="datetime-local"
@@ -258,6 +267,7 @@ class NodeNumber extends NodeBase {
 			<TextField
 				error={this.state.error !== false}
 				helperText={this.state.error}
+				onKeyPress={this.keyPressed}
 				label={this.props.display.title}
 				onChange={this.change}
 				type="number"
@@ -311,6 +321,7 @@ class NodePassword extends NodeBase {
 			<TextField
 				error={this.state.error !== false}
 				helperText={this.state.error}
+				onKeyPress={this.keyPressed}
 				label={this.props.display.title}
 				onChange={this.change}
 				type="password"
@@ -435,6 +446,7 @@ class NodeText extends NodeBase {
 			<TextField
 				error={this.state.error !== false}
 				helperText={this.state.error}
+				onKeyPress={this.keyPressed}
 				label={this.props.display.title}
 				onChange={this.change}
 				type="text"
@@ -484,6 +496,7 @@ class NodeTime extends NodeBase {
 			<TextField
 				error={this.state.error !== false}
 				helperText={this.state.error}
+				onKeyPress={this.keyPressed}
 				label={this.props.display.title}
 				onChange={this.change}
 				type="time"
@@ -596,6 +609,7 @@ export default class NodeComponent extends React.Component {
 		return (
 			<ElName
 				display={this.state.display}
+				onEnter={this.props.onEnter}
 				name={this.props.name}
 				node={this.props.node}
 				ref={el => this.el = el}
@@ -618,6 +632,7 @@ export default class NodeComponent extends React.Component {
 NodeComponent.propTypes = {
 	"name": PropTypes.string.isRequired,
 	"node": PropTypes.instanceOf(FNode).isRequired,
+	"onEnter": PropTypes.func.isRequired,
 	"value": PropTypes.any,
 	"validation": PropTypes.bool
 }

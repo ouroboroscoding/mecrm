@@ -41,9 +41,6 @@ let oStateReact = UserTree.get('division').special('react');
 oStateReact.options = Tools.omap(Divisions.US, (v,k) => [k, v]);
 UserTree.get('division').special('react', oStateReact);
 
-// Make passwd optional
-UserTree.get('passwd').optional(true);
-
 // app
 class Users extends React.Component {
 
@@ -58,9 +55,12 @@ class Users extends React.Component {
 			"users": null
 		}
 
+		// Init the results ref
+		this.results = null;
+
 		// Bind methods
 		this.createToggle = this.createToggle.bind(this);
-		this.results = this.results.bind(this);
+		this.search = this.search.bind(this);
 	}
 
 	createToggle() {
@@ -93,26 +93,23 @@ class Users extends React.Component {
 				<SearchComponent
 					noun="search"
 					service="auth"
-					success={this.results}
+					success={this.search}
 					tree={UserTree}
 				/>
-				{this.state.users &&
-					<ResultsComponent
-						data={this.state.users}
-						noun="user"
-						orderBy="email"
-						remove={true}
-						service="auth"
-						tree={UserTree}
-					/>
-				}
+				<ResultsComponent
+					noun="user"
+					orderBy="email"
+					ref={el => this.results = el}
+					remove={false}
+					service="auth"
+					tree={UserTree}
+				/>
 			</Box>
 		);
 	}
 
-	results(users) {
-		console.log(users);
-		this.setState({"users": users});
+	search(users) {
+		this.results.data = users;
 	}
 }
 

@@ -89,6 +89,7 @@ export default class ParentComponent extends React.Component {
 								ref={el => this.fields[lOrder[i]] = el}
 								name={lOrder[i]}
 								node={oChild}
+								onEnter={this.props.onEnter}
 								value={this.props.value[lOrder[i]] || {}}
 								validation={this.props.validation}
 							/>
@@ -102,6 +103,7 @@ export default class ParentComponent extends React.Component {
 								ref={el => this.fields[lOrder[i]] = el}
 								name={lOrder[i]}
 								node={oChild}
+								onEnter={this.props.onEnter}
 								value={this.props.value[lOrder[i]] || null}
 								validation={this.props.validation}
 							/>
@@ -115,8 +117,9 @@ export default class ParentComponent extends React.Component {
 
 		// Return the list of elements we generated
 		return {
-			"title": oReact.title || false,
-			"elements": lElements
+			"elements": lElements,
+			"order": lOrder,
+			"title": oReact.title || false
 		};
 	}
 
@@ -131,13 +134,59 @@ export default class ParentComponent extends React.Component {
 		);
 	}
 
-	get value() {
-		let oRet = this.props.value;
-		for(let k in this.fields) {
-			if(this.fields[k].value !== null) {
-				oRet[k] = this.fields[k].value;
+	valid() {
+
+		// Valid?
+		let bValid = true;
+
+		// Go through each item and validate it
+		for(let k of this.state.order) {
+
+			// Get the node
+			let oNode = this.props.parent.get(k);
+
+			// Check if the current value is valid
+			if(!oNode.valid(this.fields[k].value)) {
+				this.fields[k].error(oNode.validation_failures[0][1]);
+				bValid = false;
 			}
 		}
+
+		// Return valid state
+		return bValid;
+	}
+
+	get value() {
+
+		// Init the return value
+		let oRet = {};
+
+		// Go through all the fields used
+		for(let k in this.fields) {
+
+			// Get the new value
+			let newVal = this.fields[k].value;
+
+			// If we're in update mode
+			if(this.props.type === 'update') {
+
+				// If the value is different
+				if(this.props.value[k] !== newVal) {
+					oRet[k] = newVal;
+				}
+			}
+
+			// Else we're in insert or search mode
+			else {
+
+				// If the value isn't null, add it
+				if(newVal !== null) {
+					oRet[k] = newVal;
+				}
+			}
+		}
+
+		// Return the values
 		return oRet;
 	}
 
@@ -151,6 +200,7 @@ export default class ParentComponent extends React.Component {
 // Valid props
 ParentComponent.propTypes = {
 	"name": PropTypes.string.isRequired,
+	"onEnter": PropTypes.func,
 	"parent": PropTypes.instanceOf(FormatOC.Parent).isRequired,
 	"type": PropTypes.oneOf(['insert', 'search', 'update']).isRequired,
 	"value": PropTypes.object,
@@ -159,6 +209,7 @@ ParentComponent.propTypes = {
 
 // Default props
 ParentComponent.defaultProps = {
+	"onEnter": () => {},
 	"value": {},
 	"validation": true
 }
