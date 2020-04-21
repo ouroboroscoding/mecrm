@@ -1,7 +1,7 @@
 /**
- * Format Tree
+ * Form
  *
- * Handles top level Parents
+ * Handles creating forms using Format Trees
  *
  * @author Chris Nasr <bast@maleexcel.com>
  * @copyright MaleExcelMedical
@@ -28,8 +28,8 @@ import Rest from '../../generic/rest';
 // Local
 import Utils from '../../utils';
 
-// TreeComponent
-export default class TreeComponent extends React.Component {
+// FormComponent
+export default class FormComponent extends React.Component {
 
 	constructor(props) {
 
@@ -101,9 +101,14 @@ export default class TreeComponent extends React.Component {
 				// Show the popup
 				Events.trigger('success', 'Created new ' + this.state.name);
 
-				// If there's a success callback, call it with the returned data
+				// If there's a success callback
 				if(this.props.success) {
-					this.props.success(res.data);
+
+					// Add the returned key to the existing data
+					oValues[this.state.primary] = res.data;
+
+					// Pass it all to the callback
+					this.props.success(oValues);
 				}
 			}
 		});
@@ -195,7 +200,7 @@ export default class TreeComponent extends React.Component {
 }
 
 // Valid props
-TreeComponent.propTypes = {
+FormComponent.propTypes = {
 	"cancel": PropTypes.func,
 	"errors": PropTypes.object,
 	"noun": PropTypes.string.isRequired,
@@ -207,7 +212,7 @@ TreeComponent.propTypes = {
 }
 
 // Default props
-TreeComponent.defaultProps = {
+FormComponent.defaultProps = {
 	"errors": {},
 	"value": {}
 }

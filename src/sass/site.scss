@@ -47,6 +47,17 @@ a, a:active, a:hover, a:link, a:visited {
 	}
 }
 
+.permissions {
+
+	.title {
+		font-weight: bold;
+	}
+
+	.name {
+		padding-top: 22px !important;
+	}
+}
+
 .MuiPaper-root.padded {
 	margin-bottom: 20px;
 	padding: 10px;
@@ -72,7 +83,7 @@ a, a:active, a:hover, a:link, a:visited {
 .MuiTableContainer-root.results {
 	.MuiTableCell-root.actions {
 		.MuiSvgIcon-root {
-			margin-right: 10px;
+			margin-left: 10px;
 		}
 	}
 }

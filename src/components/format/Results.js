@@ -38,7 +38,7 @@ import LastPageIcon from '@material-ui/icons/LastPage';
 import VpnKeyIcon from '@material-ui/icons/VpnKey';
 
 // Components
-import Tree from './Tree';
+import FormComponent from './Form';
 
 // Generic modules
 import Clipboard from '../../generic/clipboard';
@@ -140,10 +140,22 @@ class ResultsRowComponent extends React.Component {
 		}
 
 		// Bind methods
+		this.action = this.action.bind(this);
 		this.copyKey = this.copyKey.bind(this);
 		this.editSuccess = this.editSuccess.bind(this);
 		this.editToggle = this.editToggle.bind(this);
 		this.remove = this.remove.bind(this);
+	}
+
+	action(event) {
+
+		// Get the index
+		let iIndex = event.currentTarget.dataset.index;
+
+		// Call the appropriate callback
+		this.props.actions[iIndex].callback(
+			this.state.data[this.info.primary]
+		);
 	}
 
 	copyKey() {
@@ -168,6 +180,9 @@ class ResultsRowComponent extends React.Component {
 		this.setState({
 			"data": data,
 			"edit": false
+		}, () => {
+			// Let the parent know
+			this.props.onEdit(data);
 		});
 	}
 
@@ -207,6 +222,11 @@ class ResultsRowComponent extends React.Component {
 						<DeleteIcon className="fakeAnchor" onClick={this.remove} />
 					</Tooltip>
 				}
+				{this.props.actions.map((action, i) =>
+					<Tooltip key={i} title={action.tooltip}>
+						<action.icon className="fakeAnchor" data-index={i} onClick={this.action} />
+					</Tooltip>
+				)}
 			</TableCell>
 		);
 
@@ -218,7 +238,7 @@ class ResultsRowComponent extends React.Component {
 				{this.state.edit &&
 					<TableRow>
 						<TableCell colSpan={this.fields.length + 1}>
-							<Tree
+							<FormComponent
 								cancel={this.editToggle}
 								errors={this.props.errors}
 								noun={this.info.noun}
@@ -242,6 +262,7 @@ ResultsRowComponent.propTypes = {
 	"errors": PropTypes.object.isRequired,
 	"fields": PropTypes.array.isRequired,
 	"info": PropTypes.object.isRequired,
+	"onEdit": PropTypes.func.isRequired,
 	"remove": PropTypes.oneOfType([PropTypes.func, PropTypes.bool]).isRequired
 }
 
@@ -308,7 +329,8 @@ export default class ResultsComponent extends React.Component {
 		this.orderChange = this.orderChange.bind(this);
 		this.pageChange = this.pageChange.bind(this);
 		this.perPageChange = this.perPageChange.bind(this);
-		this.remove = this.remove.bind(this);
+		this.recordChanged = this.recordChanged.bind(this);
+		this.recordRemoved = this.recordRemoved.bind(this);
 	}
 
 	exportCsv() {
@@ -381,7 +403,103 @@ export default class ResultsComponent extends React.Component {
 		});
 	}
 
-	remove(key) {
+	render() {
+		return (
+			<TableContainer className="results">
+				<Table stickyHeader aria-label="sticky table">
+					<TableHead>
+						<TableRow>
+							{this.titles.map(title => (
+								<TableCell
+									key={title.key}
+									sortDirection={this.state.orderBy === title.key ? this.state.order : false}
+								>
+									<TableSortLabel
+										active={this.state.orderBy === title.key}
+										direction={this.state.orderBy === title.key ? this.state.order : 'asc'}
+										data-key={title.key}
+										onClick={this.orderChange}
+									>
+										{title.text}
+									</TableSortLabel>
+								</TableCell>
+							))}
+							<TableCell align="right">
+								<Tooltip title="Export CSV">
+									<DescriptionIcon className="fakeAnchor" onClick={this.exportCsv} />
+								</Tooltip>
+							</TableCell>
+						</TableRow>
+					</TableHead>
+					<TableBody>
+						{(this.state.rowsPerPage > 0 ?
+							this.state.data.slice(
+								this.state.page * this.state.rowsPerPage,
+								this.state.page * this.state.rowsPerPage + this.state.rowsPerPage
+							) : this.state.data).map(row =>
+							<ResultsRowComponent
+								actions={this.props.actions}
+								data={row}
+								errors={this.props.errors}
+								fields={this.fields}
+								info={this.info}
+								key={row[this.info.primary]}
+								onEdit={this.recordChanged}
+								remove={this.props.remove ? this.remove : false}
+							/>
+						)}
+					</TableBody>
+					<TableFooter>
+						<TableRow>
+							<TablePagination
+								colSpan={this.titles.length + 1}
+								count={this.state.data.length}
+								onChangePage={this.pageChange}
+								onChangeRowsPerPage={this.perPageChange}
+								page={this.state.page}
+								rowsPerPage={this.state.rowsPerPage}
+								rowsPerPageOptions={[10, 20, 50, { label: 'All', value: -1 }]}
+								ActionsComponent={PaginationActionsComponent}
+								SelectProps={{
+									inputProps: { 'aria-label': 'rows per page' },
+									native: true,
+								}}
+							/>
+						</TableRow>
+					</TableFooter>
+				</Table>
+			</TableContainer>
+		);
+	}
+
+	recordChanged(record) {
+
+		console.log(record);
+
+		// Clone the state data
+		let data = Tools.clone(this.state.data);
+
+		// Find the index
+		let iIndex = Tools.afindi(
+			data,
+			this.info.primary,
+			record[this.info.primary]
+		);
+
+		console.log(iIndex);
+
+		// If found
+		if(iIndex > -1) {
+
+			// Update the data
+			data[iIndex] = record;
+
+			// Save the new state
+			this.setState({"data": data});
+		}
+	}
+
+	recordRemoved(key) {
 
 		// Send the key to the service via rest
 		Rest.delete(this.props.service, this.props.noun, {
@@ -419,73 +537,6 @@ export default class ResultsComponent extends React.Component {
 		});
 	}
 
-	render() {
-		return (
-			<TableContainer className="results">
-				<Table stickyHeader aria-label="sticky table">
-					<TableHead>
-						<TableRow>
-							{this.titles.map(title => (
-								<TableCell
-									key={title.key}
-									sortDirection={this.state.orderBy === title.key ? this.state.order : false}
-								>
-									<TableSortLabel
-										active={this.state.orderBy === title.key}
-										direction={this.state.orderBy === title.key ? this.state.order : 'asc'}
-										data-key={title.key}
-										onClick={this.orderChange}
-									>
-										{title.text}
-									</TableSortLabel>
-								</TableCell>
-							))}
-							<TableCell align="right">
-								<Tooltip title="Export CSV">
-									<DescriptionIcon className="fakeAnchor" onClick={this.exportCsv} />
-								</Tooltip>
-							</TableCell>
-						</TableRow>
-					</TableHead>
-					<TableBody>
-						{(this.state.rowsPerPage > 0 ?
-							this.state.data.slice(
-								this.state.page * this.state.rowsPerPage,
-								this.state.page * this.state.rowsPerPage + this.state.rowsPerPage
-							) : this.state.data).map(row =>
-							<ResultsRowComponent
-								data={row}
-								errors={this.props.errors}
-								fields={this.fields}
-								key={row[this.info.primary]}
-								remove={this.props.remove ? this.remove : false}
-								info={this.info}
-							/>
-						)}
-					</TableBody>
-					<TableFooter>
-						<TableRow>
-							<TablePagination
-								rowsPerPageOptions={[10, 20, 50, { label: 'All', value: -1 }]}
-								colSpan={this.titles.length + 1}
-								count={this.state.data.length}
-								rowsPerPage={this.state.rowsPerPage}
-								page={this.state.page}
-								SelectProps={{
-									inputProps: { 'aria-label': 'rows per page' },
-									native: true,
-								}}
-								onChangePage={this.pageChange}
-								onChangeRowsPerPage={this.perPageChange}
-								ActionsComponent={PaginationActionsComponent}
-							/>
-						</TableRow>
-					</TableFooter>
-				</Table>
-			</TableContainer>
-		);
-	}
-
 	sortData(data, order, orderBy) {
 
 		// Sort it based on the order and orderBy
@@ -517,6 +568,7 @@ export default class ResultsComponent extends React.Component {
 
 // Valid props
 ResultsComponent.propTypes = {
+	"actions": PropTypes.array,
 	"errors": PropTypes.object,
 	"noun": PropTypes.string.isRequired,
 	"orderBy": PropTypes.string.isRequired,
@@ -527,6 +579,7 @@ ResultsComponent.propTypes = {
 
 // Default props
 ResultsComponent.defaultProps = {
+	"actions": [],
 	"errors": {},
 	"remove": false
 }
