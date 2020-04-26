@@ -167,7 +167,7 @@ export function empty(m) {
 
 	// Else if it's an array or a string
 	else if(Array.isArray(m) || typeof m == 'string') {
-		return m.length > 0 ? true : false;
+		return m.length === 0;
 	}
 
 	// Else
