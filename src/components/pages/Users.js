@@ -67,7 +67,7 @@ class Users extends React.Component {
 		this.state = {
 			"createNew": false,
 			"permissions": false,
-			"users": null
+			"users": []
 		}
 
 		// Init the refs
@@ -175,6 +175,7 @@ class Users extends React.Component {
 					actions={[
 						{"tooltip": "Edit User's permissions", "icon": HttpsIcon, "callback": this.permissionsShow}
 					]}
+					data={this.state.users}
 					noun="user"
 					orderBy="email"
 					ref={el => this.results = el}
