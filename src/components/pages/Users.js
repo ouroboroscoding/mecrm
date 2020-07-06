@@ -179,7 +179,6 @@ class Users extends React.Component {
 					noun="user"
 					orderBy="email"
 					ref={el => this.results = el}
-					remove={false}
 					service="auth"
 					tree={UserTree}
 				/>
