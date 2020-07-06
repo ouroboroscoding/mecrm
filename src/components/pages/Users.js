@@ -161,7 +161,7 @@ class Users extends React.Component {
 							service="auth"
 							success={this.createSuccess}
 							tree={UserTree}
-							type="insert"
+							type="create"
 						/>
 					</Paper>
 				}
