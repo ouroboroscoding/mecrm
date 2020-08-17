@@ -146,6 +146,22 @@ export function compare(v1, v2) {
 }
 
 /**
+ * Date Increment
+ *
+ * Returns a date incremented by the given days. Use negative to decrement
+ *
+ * @name dateInc
+ * @access public
+ * @param uint days The number of days to increment by
+ * @return Date
+ */
+export function dateInc(days=1) {
+	let date = new Date();
+	date.setDate(date.getDate() + days);
+	return date;
+}
+
+/**
  * Empty
  *
  * Returns true if the value type is empty
@@ -237,7 +253,7 @@ export function isObject(m) {
  * @access public
  * @param Object o				The object to map
  * @param Function callback		The function to call each iteration
- * @return array
+ * @return Array
  */
 export function omap(o, callback) {
 	let ret = [];
@@ -245,6 +261,75 @@ export function omap(o, callback) {
 		ret.push(callback(o[k], k));
 	}
 	return ret;
+}
+
+/**
+ * Safe Local Storage
+ *
+ * Fetches a value from local storage or returns the default if no value is
+ * found
+ *
+ * safeLocalStorage
+ * @access public
+ * @param String name			The name of the local var to fetch
+ * @param String default_		The value to return if the var is not found
+ * @return String
+ */
+export function safeLocalStorage(name, default_) {
+	let value = localStorage.getItem(name);
+	return value === null ? default_ : value;
+}
+
+/**
+ * Safe Local Storage JSON
+ *
+ * Fetches a value from local storage or returns the default if no value is
+ * found. Assumes data is stored in JSON
+ *
+ * safeLocalStorageJSON
+ * @access public
+ * @param String name			The name of the local var to fetch
+ * @param String default_		The value to return if the var is not found
+ * @return String
+ */
+export function safeLocalStorageJSON(name, default_) {
+	let value = localStorage.getItem(name);
+	return value === null ? default_ : JSON.parse(value);
+}
+
+/**
+ * Sort By Key
+ *
+ * Returns a callback function that will compare two objects by the key name
+ * pass
+ *
+ * @name sortByKey
+ * @access public
+ * @param string key The name of the key to sort by
+ * @return Function
+ */
+export function sortByKey(key) {
+	return (a, b) => {
+		if(a[key] === b[key]) return 0;
+		else return (a[key] < b[key]) ? -1 : 1;
+	}
+}
+
+/**
+ * UCFirst
+ *
+ * Makes the first character of each word in the text upper case
+ *
+ * @name ucfirst
+ * @access public
+ * @param String text			The text to convert
+ * @return String
+ */
+export function ucfirst(text) {
+	let lParts = text.split(' ');
+	return lParts.map(s =>
+		s.charAt(0).toUpperCase() + s.slice(1)
+	).join(' ');
 }
 
 /**
@@ -268,10 +353,15 @@ export default {
 	afindo: afindo,
 	clone: clone,
 	compare: compare,
+	dateInc: dateInc,
 	empty: empty,
 	isDecimal: isDecimal,
 	isInteger: isInteger,
 	isObject: isObject,
 	omap: omap,
+	safeLocalStorage: safeLocalStorage,
+	safeLocalStorageJSON: safeLocalStorageJSON,
+	sortByKey: sortByKey,
+	ucfirst: ucfirst,
 	uuidv4: uuidv4
 }
