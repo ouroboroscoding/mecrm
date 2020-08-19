@@ -19,6 +19,7 @@ import Hash from '../generic/hash';
 import Rest from '../generic/rest';
 
 // Hooks
+import { useResize } from '../hooks/resize';
 import { useSignedIn, useSignedOut } from '../hooks/user';
 
 // Composite component modules
@@ -26,6 +27,8 @@ import Alerts from './composites/Alerts';
 import Header from './composites/Header';
 import Signin from './composites/Signin';
 // Page component modules
+import Customer from './pages/Customer';
+import CustomerNew from './pages/CustomerNew';
 import Customers from './pages/Customers';
 import Users from './pages/Users';
 
@@ -76,11 +79,15 @@ LoaderHide();
 export default function Site(props) {
 
 	// State
-	let [user, setUser] = useState(false);
+	let [mobile, mobileSet] = useState(document.documentElement.clientWidth < 600 ? true : false);
+	let [user, userSet] = useState(false);
 
 	// User hooks
-	useSignedIn(user => setUser(user));
-	useSignedOut(() => setUser(false));
+	useSignedIn(user => userSet(user));
+	useSignedOut(() => userSet(false));
+
+	// Resize hooks
+	useResize(() => mobileSet(document.documentElement.clientWidth < 600 ? true : false));
 
 	// Render
 	return (
@@ -90,7 +97,10 @@ export default function Site(props) {
 				{user === false &&
 					<Signin />
 				}
-				<Header user={user} />
+				<Header
+					mobile={mobile}
+					user={user}
+				/>
 				<div id="content">
 					<Switch>
 						<Route path="/users">
@@ -99,6 +109,20 @@ export default function Site(props) {
 						<Route path="/customers">
 							<Customers />
 						</Route>
+						<Route path="/customer/new">
+							<CustomerNew />
+						</Route>
+						<Route
+							path="/customer/:id"
+							component={({match: {params:{id}}}) => (
+								<Customer
+									key={id}
+									_id={id}
+									mobile={mobile}
+									user={user}
+								/>
+							)}
+						/>
 					</Switch>
 				</div>
 			</div>

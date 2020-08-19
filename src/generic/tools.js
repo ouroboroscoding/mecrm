@@ -281,6 +281,24 @@ export function safeLocalStorage(name, default_) {
 }
 
 /**
+ * Safe Local Storage Bool
+ *
+ * Fetches a value from local storage or returns the default if no value is
+ * found. Assumes data is a boolean value
+ *
+ * @name safeLocalStorageBool
+ * @param String name			The name of the local var to fetch
+ * @param String default_		The value to return if the var is not found
+ * @return bool
+ */
+export function safeLocalStorageBool(name, default_=false) {
+	let value = localStorage.getItem(name);
+	return value === null ? default_ : (
+		value === '' ? false : true
+	)
+}
+
+/**
  * Safe Local Storage JSON
  *
  * Fetches a value from local storage or returns the default if no value is
@@ -360,6 +378,7 @@ export default {
 	isObject: isObject,
 	omap: omap,
 	safeLocalStorage: safeLocalStorage,
+	safeLocalStorageBool: safeLocalStorageBool,
 	safeLocalStorageJSON: safeLocalStorageJSON,
 	sortByKey: sortByKey,
 	ucfirst: ucfirst,

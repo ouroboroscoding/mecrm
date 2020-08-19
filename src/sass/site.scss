@@ -8,12 +8,14 @@ $menu-width: 250px;
 @import 'loader';
 
 /* components */
-@import 'customers';
 @import 'format';
 @import 'header';
+@import 'menu';
+/* pages */
+@import 'customers';
 @import 'users';
 
-
+/* site */
 html, body, #root, #site, #content {
 	height: 100%;
 }
@@ -45,7 +47,6 @@ td {
 	vertical-align: top !important;
 }
 
-// Site
 #site {
 	display: flex;
 	flex-direction: column;
@@ -57,7 +58,7 @@ td {
 	flex-shrink: 1;
 }
 
-/** Classes */
+/* classes */
 .MuiPaper-root.padded {
 	margin-bottom: 20px;
 	padding: 10px;

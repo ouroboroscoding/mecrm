@@ -150,7 +150,7 @@ export default function Users(props) {
 
 	// Render
 	return (
-		<Box className="users">
+		<Box id="users">
 			<Box className="pageHeader">
 				<Typography variant="h3" className="title">Users</Typography>
 				<Tooltip title="Create new User">

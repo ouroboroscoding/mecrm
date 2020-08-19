@@ -1,16 +1,16 @@
-.users {
-	padding: 10px;
-}
-
-.permissions {
-	margin-bottom: 10px;
+#users {
 	padding: 10px;
 
-	.title {
-		font-weight: bold;
-	}
+	.permissions {
+		margin-bottom: 10px;
+		padding: 10px;
 
-	.name {
-		padding-top: 22px !important;
+		.title {
+			font-weight: bold;
+		}
+
+		.name {
+			padding-top: 22px !important;
+		}
 	}
 }

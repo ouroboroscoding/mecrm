@@ -43,15 +43,14 @@ import Utils from '../../utils';
 
 // Definitions
 import CustomerDef from '../../definitions/customers/customer';
-import Divisions from '../../definitions/divisions';
 
 // Generate the user Tree
 const CustomerTree = new Tree(CustomerDef);
 
-// Update the division (state) info
-let oStateReact = CustomerTree.get('division').special('react');
-oStateReact.options = Tools.omap(Divisions.US, (v,k) => [k, v]);
-CustomerTree.get('division').special('react', oStateReact);
+CustomerTree.special('react', {
+	"results": ['_id'],
+	"search": ['_id', 'email', 'first_name', 'last_name', 'dob', 'phoneNumber']
+})
 
 /**
  * Customers
@@ -84,7 +83,7 @@ export default function Customers(props) {
 
 	// Render
 	return (
-		<Box className="customers">
+		<Box id="customers">
 			<Box className="pageHeader">
 				<Typography variant="h3" className="title">Customers</Typography>
 				<Tooltip title="Create new Customer">
