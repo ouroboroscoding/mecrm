@@ -33,7 +33,6 @@ import Events from '../../generic/events';
 import Rest from '../../generic/rest';
 
 // Local modules
-import Loader from '../../loader';
 import Utils from '../../utils';
 
 // app
@@ -89,7 +88,7 @@ class Header extends React.Component {
 	render() {
 		return (
 			<div id="header">
-				<AppBar position="fixed">
+				<AppBar position="relative">
 					<Toolbar>
 						<IconButton edge="start" color="inherit" aria-label="menu" onClick={this.menuToggle}>
 							<MenuIcon />
@@ -135,9 +134,6 @@ class Header extends React.Component {
 
 	signout(ev) {
 
-		// Show loader
-		Loader.show();
-
 		// Call the signout
 		Rest.create('auth', 'signout', {}).done(res => {
 
@@ -160,9 +156,6 @@ class Header extends React.Component {
 				// Trigger the signedOut event
 				Events.trigger('signedOut');
 			}
-		}).always(() => {
-			// Hide loader
-			Loader.hide();
 		});
 	}
 

@@ -49,6 +49,7 @@ class Signin extends React.Component {
 		this.fields = {};
 
 		// Bind methods to this instance
+		this.keyPressed = this.keyPressed.bind(this);
 		this.signin = this.signin.bind(this);
 	}
 
@@ -79,6 +80,12 @@ class Signin extends React.Component {
 		});
 	}
 
+	keyPressed(event) {
+		if(event.key === 'Enter') {
+			this.signin();
+		}
+	}
+
 	render() {
 		return (
 			<Dialog
@@ -97,6 +104,7 @@ class Signin extends React.Component {
 								helperText={this.state.errors.email || ''}
 								inputRef={el => this.fields.email = el}
 								label="Email"
+								onKeyPress={this.keyPressed}
 								type="email"
 							/></div>
 							<div><TextField
@@ -104,6 +112,7 @@ class Signin extends React.Component {
 								helperText={this.state.errors.passwd || ''}
 								inputRef={el => this.fields.passwd = el}
 								label="Password"
+								onKeyPress={this.keyPressed}
 								type="password"
 							/></div>
 						</DialogContent>
