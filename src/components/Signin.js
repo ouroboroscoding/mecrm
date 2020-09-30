@@ -20,12 +20,12 @@ import Dialog from '@material-ui/core/Dialog';
 import TextField from '@material-ui/core/TextField';
 
 // Generic modules
-import Events from '../../generic/events';
-import Hash from '../../generic/hash';
-import Rest from '../../generic/rest';
+import Events from '../generic/events';
+import Hash from '../generic/hash';
+import Rest from '../generic/rest';
 
 // Local modules
-import Utils from '../../utils';
+import Utils from '../utils';
 
 // Sign In
 class Signin extends React.Component {
@@ -89,13 +89,14 @@ class Signin extends React.Component {
 	render() {
 		return (
 			<Dialog
+				id="signin"
 				disableBackdropClick
 				disableEscapeKeyDown
 				maxWidth="lg"
 				open={true}
 				aria-labelledby="confirmation-dialog-title"
 			>
-				<DialogTitle id="confirmation-dialog-title">MeCRM</DialogTitle>
+				<DialogTitle id="confirmation-dialog-title">Welcome, please sign in</DialogTitle>
 				{this.state.form === 'signin' &&
 					<React.Fragment>
 						<DialogContent dividers>
@@ -136,7 +137,7 @@ class Signin extends React.Component {
 		Rest.create('auth', 'signin', {
 			"email": this.fields.email.value,
 			"passwd": this.fields.passwd.value
-		}).done(res => {
+		}, false).done(res => {
 
 			// If there's an error
 			if(res.error && !Utils.restError(res.error)) {

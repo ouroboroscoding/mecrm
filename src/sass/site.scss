@@ -11,6 +11,8 @@ $menu-width: 250px;
 @import 'format';
 @import 'header';
 @import 'menu';
+@import 'signin';
+
 /* pages */
 @import 'customers';
 @import 'users';
@@ -66,7 +68,18 @@ td {
 
 .MuiTypography-h1, .MuiTypography-h2, .MuiTypography-h3,
 .MuiTypography-h4, .MuiTypography-h5, .MuiTypography-h6 {
-	margin-bottom: 5px;
+	margin-bottom: 10px !important;
+}
+
+.MuiBox-root.rounded {
+	border: 1px solid #cecece;
+	border-radius: 5px;
+	margin-bottom: 15px;
+	padding: 10px;
+}
+
+.MuiBox-root.actions {
+	text-align: right;
 }
 
 .pageHeader {

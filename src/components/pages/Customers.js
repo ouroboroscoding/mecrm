@@ -10,36 +10,22 @@
 
 // NPM modules
 import Tree from 'format-oc/Tree'
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 
 // Material UI
 import Box from '@material-ui/core/Box';
-import Button from '@material-ui/core/Button';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogActions from '@material-ui/core/DialogActions';
-import Dialog from '@material-ui/core/Dialog';
 import IconButton from '@material-ui/core/IconButton';
 import Paper from '@material-ui/core/Paper';
 import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
 
 // Material UI Icons
-import HttpsIcon from '@material-ui/icons/Https';
 import PersonAddIcon from '@material-ui/icons/PersonAdd';
 
 // Components
 import ResultsComponent from '../format/Results';
 import SearchComponent from '../format/Search';
 import FormComponent from '../format/Form';
-
-// Generic modules
-import Events from '../../generic/events';
-import Rest from '../../generic/rest';
-import Tools from '../../generic/tools';
-
-// Local modules
-import Utils from '../../utils';
 
 // Definitions
 import CustomerDef from '../../definitions/customers/customer';

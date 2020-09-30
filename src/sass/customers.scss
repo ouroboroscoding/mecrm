@@ -1,3 +1,31 @@
 #customers {
 	padding: 10px;
 }
+
+#customer_new {
+	padding: 20px;
+
+	.MuiFormControl-root {
+		width: 100%;
+	}
+
+	.AddressComposite {
+		margin-bottom: 20px;
+	}
+
+	.addressAdd {
+		margin-top: -40px;
+	}
+
+	.addressOption {
+		position: relative;
+
+		button.floating {
+			position: absolute;
+			right: 5px;
+			top: 0;
+			height: 35px;
+			width: 35px;
+		}
+	}
+}

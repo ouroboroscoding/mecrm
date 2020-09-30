@@ -14,7 +14,6 @@ import { Link } from 'react-router-dom';
 
 // Material UI
 import AppBar from '@material-ui/core/AppBar';
-import Button from '@material-ui/core/Button';
 import Collapse from '@material-ui/core/Collapse';
 import Drawer from '@material-ui/core/Drawer';
 import ExpandLess from '@material-ui/icons/ExpandLess';
@@ -25,22 +24,25 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Toolbar from '@material-ui/core/Toolbar';
+import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
 
 // Material UI Icons
 import EmojiPeopleIcon from '@material-ui/icons/EmojiPeople';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import GroupIcon from '@material-ui/icons/Group';
 import MenuIcon from '@material-ui/icons/Menu';
+import PermIdentityIcon from '@material-ui/icons/PermIdentity';
 import PersonAddIcon from '@material-ui/icons/PersonAdd';
 import SearchIcon from '@material-ui/icons/Search';
 
 // Generic modules
-import Events from '../../generic/events';
-import Rest from '../../generic/rest';
-import { safeLocalStorageBool } from '../../generic/tools';
+import Events from '../generic/events';
+import Rest from '../generic/rest';
+import { safeLocalStorageBool } from '../generic/tools';
 
 // Local modules
-import Utils from '../../utils';
+import Utils from '../utils';
 
 // Header component
 export default function Header(props) {
@@ -99,15 +101,21 @@ export default function Header(props) {
 					<IconButton edge="start" color="inherit" aria-label="menu" onClick={menuToggle}>
 						<MenuIcon />
 					</IconButton>
-					<Typography variant="h6" className="title">
-						<Link to="/">
-							{props.mobile ? "ME CRM" : "Male Excel Customer Relationship Management"}
-						</Link>
+					<Typography className="title">
+						<Link to="/">Citadel</Link>
 					</Typography>
 					{props.user &&
 						<React.Fragment>
-							<Button color="inherit" onClick={ev => accountSet(true)}>My Account</Button>
-							<Button color="inherit" onClick={signout}>Sign Out</Button>
+							<Tooltip title="Your Account">
+								<IconButton onClick={ev => accountSet(true)}>
+									<PermIdentityIcon />
+								</IconButton>
+							</Tooltip>
+							<Tooltip title="Sign Out">
+								<IconButton onClick={signout}>
+									<ExitToAppIcon />
+								</IconButton>
+							</Tooltip>
 						</React.Fragment>
 					}
 				</Toolbar>
@@ -148,6 +156,9 @@ export default function Header(props) {
 					</Link>
 				</List>
 			</Drawer>
+			{account &&
+				<div />
+			}
 		</div>
 	);
 }

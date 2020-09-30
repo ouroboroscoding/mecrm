@@ -22,20 +22,19 @@ import Rest from '../generic/rest';
 import { useResize } from '../hooks/resize';
 import { useSignedIn, useSignedOut } from '../hooks/user';
 
-// Composite component modules
-import Alerts from './composites/Alerts';
-import Header from './composites/Header';
-import Signin from './composites/Signin';
+// Site component modules
+import Alerts from './Alerts';
+import Header from './Header';
+import { LoaderHide, LoaderShow } from './Loader';
+import Signin from './Signin';
+
 // Page component modules
 import Customer from './pages/Customer';
 import CustomerNew from './pages/CustomerNew';
 import Customers from './pages/Customers';
 import Users from './pages/Users';
 
-// Local modules
-import { LoaderHide, LoaderShow } from './composites/Loader';
-
-// css
+// CSS
 import '../sass/site.scss';
 
 // Init the rest services
