@@ -42,7 +42,7 @@ code {
 }
 
 p {
-	margin-bottom: 10px;
+	margin-bottom: 10px !important;
 }
 
 td {
@@ -60,15 +60,30 @@ td {
 	flex-shrink: 1;
 }
 
+#notFound {
+	padding: 20px;
+}
+
 /* classes */
 .MuiPaper-root.padded {
 	margin-bottom: 20px;
 	padding: 10px;
 }
 
+.MuiTextField-root {
+	width: 100%;
+}
+
 .MuiTypography-h1, .MuiTypography-h2, .MuiTypography-h3,
 .MuiTypography-h4, .MuiTypography-h5, .MuiTypography-h6 {
+	font-weight: 400 !important;
 	margin-bottom: 10px !important;
+}
+
+.MuiTypography-root.title {
+
+	font-size: 110%;
+	font-weight: bold;
 }
 
 .MuiBox-root.rounded {

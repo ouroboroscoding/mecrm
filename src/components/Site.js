@@ -112,15 +112,13 @@ export default function Site(props) {
 							<CustomerNew />
 						</Route>
 						<Route
-							path="/customer/:id"
-							component={({match: {params:{id}}}) => (
+							path="/customer/:_id"
+							children={
 								<Customer
-									key={id}
-									_id={id}
 									mobile={mobile}
 									user={user}
 								/>
-							)}
+							}
 						/>
 					</Switch>
 				</div>

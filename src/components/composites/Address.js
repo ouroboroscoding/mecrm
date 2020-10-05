@@ -24,6 +24,7 @@ import Select from '@material-ui/core/Select'
 import NodeComponent from '../format/Node';
 
 // Generic modules
+import Events from '../../generic/events';
 import { empty, omap } from '../../generic/tools';
 
 // Definition data
@@ -89,6 +90,16 @@ export default class Address extends React.Component {
 
 	enterKey() {
 		console.log('enter pressed');
+	}
+
+	error(errors) {
+		for(var k in errors) {
+			if(k in this.fields) {
+				this.fields[k].error(errors[k]);
+			} else {
+				Events.trigger('error', 'Field not found error: ' + errors[k] + ' (' + k + ')');
+			}
+		}
 	}
 
 	// Render

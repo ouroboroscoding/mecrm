@@ -1,5 +1,76 @@
-#customers {
-	padding: 10px;
+#customer {
+	padding: 20px;
+
+	.header {
+		display: flex;
+		flex-direction: row;
+
+		.MuiTypography-root {
+			flex-basis: 0;
+			flex-grow: 0;
+			flex-shrink: 0;
+			vertical-align: top;
+		}
+
+		.actions {
+			flex-basis: 0;
+			flex-grow: 1;
+			flex-shrink: 1;
+			text-align: right;
+		}
+	}
+
+	.details {
+
+		.copy {
+			flex-basis: 0;
+			flex-grow: 0;
+			flex-shrink: 0;
+
+			button {
+				margin-top: -6px;
+			}
+		}
+
+		.addressDisplay {
+			p {
+				margin: 0;
+				padding: 0;
+			}
+		}
+
+		.addressEdit {
+
+			.MuiInputBase-root {
+				width: 100%;
+			}
+
+			.content {
+				padding: 18px;
+			}
+		}
+	}
+
+	.name {
+		display: inline-block;
+		width: 135px;
+	}
+
+	.MuiSvgIcon-root.copy {
+		font-size: 80%;
+	}
+
+	.note {
+		.user {
+			font-weight: bold;
+		}
+		.date {
+			font-style: italic;
+		}
+		.content {
+			margin-left: 30px;
+		}
+	}
 }
 
 #customer_new {
@@ -14,7 +85,7 @@
 	}
 
 	.addressAdd {
-		margin-top: -40px;
+		margin-top: -60px;
 	}
 
 	.addressOption {
@@ -28,4 +99,8 @@
 			width: 35px;
 		}
 	}
+}
+
+#customers {
+	padding: 20px;
 }

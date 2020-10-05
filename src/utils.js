@@ -97,6 +97,23 @@ export default {
 		return oRet;
 	},
 
+	fullName: function(customer) {
+		let s = '';
+
+		if(customer.title) {
+			s += customer.title + ' ';
+		}
+		s += customer.first_name + ' ';
+		if(customer.middle_name) {
+			s += customer.middle_name + ' ';
+		}
+		s += customer.last_name;
+		if(customer.suffix) {
+			s += ' ' + customer.suffix;
+		}
+		return s;
+	},
+
 	hasRight: function(user, name, type) {
 
 		// If we have no user
