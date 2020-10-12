@@ -31,10 +31,13 @@ import Typography from '@material-ui/core/Typography';
 import EmojiPeopleIcon from '@material-ui/icons/EmojiPeople';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import GroupIcon from '@material-ui/icons/Group';
+import GroupWorkIcon from '@material-ui/icons/GroupWork';
+import LocalPharmacyIcon from '@material-ui/icons/LocalPharmacy';
 import MenuIcon from '@material-ui/icons/Menu';
 import PermIdentityIcon from '@material-ui/icons/PermIdentity';
 import PersonAddIcon from '@material-ui/icons/PersonAdd';
 import SearchIcon from '@material-ui/icons/Search';
+import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 
 // Generic modules
 import Events from '../generic/events';
@@ -50,6 +53,7 @@ export default function Header(props) {
 	// State
 	let [account, accountSet] = useState(false);
 	let [customer, customerSet] = useState(safeLocalStorageBool('menuCustomer'));
+	let [product, productSet] = useState(safeLocalStorageBool('menuProduct'));
 	let [menu, menuSet] = useState(false);
 
 	// Show/Hide menu
@@ -62,7 +66,15 @@ export default function Header(props) {
 		customerSet(val => {
 			localStorage.setItem('menuCustomer', val ? '' : 'x');
 			return !val;
-		})
+		});
+	}
+
+	// Show/hide Customer sub-menu
+	function productMenuToggle() {
+		productSet(val => {
+			localStorage.setItem('menuProduct', val ? '' : 'x');
+			return !val;
+		});
 	}
 
 	// Signout of app
@@ -144,6 +156,33 @@ export default function Header(props) {
 								<ListItem button>
 									<ListItemIcon><PersonAddIcon /></ListItemIcon>
 									<ListItemText primary="New" />
+								</ListItem>
+							</Link>
+						</List>
+					</Collapse>
+					<ListItem button key="Products" onClick={productMenuToggle}>
+						<ListItemIcon><ShoppingCartIcon /></ListItemIcon>
+						<ListItemText primary="Products" />
+						{customer ? <ExpandLess /> : <ExpandMore />}
+					</ListItem>
+					<Collapse in={product} timeout="auto" unmountOnExit>
+						<List component="div" className="submenu">
+							<Link to="/products/groups" onClick={menuToggle}>
+								<ListItem button key="Groups">
+									<ListItemIcon><GroupWorkIcon /></ListItemIcon>
+									<ListItemText primary="Groups" />
+								</ListItem>
+							</Link>
+							<Link to="/products/medications" onClick={menuToggle}>
+								<ListItem button key="Medications">
+									<ListItemIcon><LocalPharmacyIcon /></ListItemIcon>
+									<ListItemText primary="Medications" />
+								</ListItem>
+							</Link>
+							<Link to="/products" onClick={menuToggle}>
+								<ListItem button key="Products">
+									<ListItemIcon><ShoppingCartIcon /></ListItemIcon>
+									<ListItemText primary="Products" />
 								</ListItem>
 							</Link>
 						</List>

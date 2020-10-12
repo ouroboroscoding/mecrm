@@ -152,10 +152,10 @@ export default function Users(props) {
 	return (
 		<Box id="users">
 			<Box className="pageHeader">
-				<Typography variant="h3" className="title">Users</Typography>
+				<Typography variant="h4">Users</Typography>
 				<Tooltip title="Create new User">
 					<IconButton onClick={createToggle}>
-						<PersonAddIcon className="icon" />
+						<PersonAddIcon />
 					</IconButton>
 				</Tooltip>
 			</Box>

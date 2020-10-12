@@ -27,11 +27,15 @@ import ResultsComponent from '../format/Results';
 import SearchComponent from '../format/Search';
 import FormComponent from '../format/Form';
 
+// Generic modules
+import { clone } from '../../generic/tools';
+
 // Definitions
 import CustomerDef from '../../definitions/customers/customer';
 
 // Generate the user Tree
-const CustomerTree = new Tree(CustomerDef);
+const CustomerTree = new Tree(clone(CustomerDef));
+
 
 CustomerTree.special('react', {
 	"results": ['_id'],

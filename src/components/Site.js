@@ -30,8 +30,11 @@ import Signin from './Signin';
 
 // Page component modules
 import Customer from './pages/Customer';
-import CustomerNew from './pages/CustomerNew';
+import CustomerNew from './pages/Customer/New';
 import Customers from './pages/Customers';
+import Products from './pages/Products';
+import ProductsGroups from './pages/Products/Groups';
+import ProductsMedications from './pages/Products/Medications';
 import Users from './pages/Users';
 
 // CSS
@@ -102,16 +105,14 @@ export default function Site(props) {
 				/>
 				<div id="content">
 					<Switch>
-						<Route path="/users">
-							<Users />
-						</Route>
-						<Route path="/customers">
+						<Route exact path="/customers">
 							<Customers />
 						</Route>
-						<Route path="/customer/new">
+						<Route exact path="/customer/new">
 							<CustomerNew />
 						</Route>
 						<Route
+						 	exact
 							path="/customer/:_id"
 							children={
 								<Customer
@@ -120,6 +121,18 @@ export default function Site(props) {
 								/>
 							}
 						/>
+						<Route exact path="/products">
+							<Products user={user} />
+						</Route>
+						<Route exact path="/products/groups">
+							<ProductsGroups user={user} />
+						</Route>
+						<Route exact path="/products/medications">
+							<ProductsMedications user={user} />
+						</Route>
+						<Route exact path="/users">
+							<Users />
+						</Route>
 					</Switch>
 				</div>
 			</div>

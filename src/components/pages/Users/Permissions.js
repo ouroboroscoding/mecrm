@@ -27,9 +27,16 @@ const UPDATE = 2;
 const DELETE = 8;
 //const ALL    = 15;
 const TYPES = [
-	{title: "CRM Users", rights: [
+	{title: "Users", rights: [
 		{name: "user", title: "Users", allowed: CREATE | READ | UPDATE},
 		{name: "permission", title: "Permissions", allowed: UPDATE}
+	]},
+	{title: "Customers", rights: [
+		{name: "customers", title: "Customers", allowed: CREATE | READ | UPDATE},
+		{name: "customers_notes", title: "Notes", allowed: CREATE | READ}
+	]},
+	{title: "Products", rights: [
+		{name: "products", title: "Products", allowed: CREATE | READ | UPDATE}
 	]}
 ];
 

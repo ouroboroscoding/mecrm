@@ -56,7 +56,7 @@ import CustomerDef from '../../definitions/customers/customer';
 import Locales from '../../definitions/locales';
 
 // Tree
-const CustomerTree = new Tree(CustomerDef);
+const CustomerTree = new Tree(clone(CustomerDef));
 
 // CustomerNew component
 export default function Customer(props) {
