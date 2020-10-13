@@ -21,12 +21,14 @@ import DialogActions from '@material-ui/core/DialogActions';
 import Dialog from '@material-ui/core/Dialog';
 import IconButton from '@material-ui/core/IconButton';
 import Paper from '@material-ui/core/Paper';
+import TextField from '@material-ui/core/TextField';
 import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
 
 // Material UI Icons
 import HttpsIcon from '@material-ui/icons/Https';
 import PersonAddIcon from '@material-ui/icons/PersonAdd';
+import VpnKeyIcon from '@material-ui/icons/VpnKey';
 
 // Components
 import ResultsComponent from '../format/Results';
@@ -70,10 +72,12 @@ export default function Users(props) {
 
 	// State
 	let [create, createSet] = useState(false);
+	let [password, passwordSet] = useState(false);
 	let [permissions, permissionsSet] = useState(false);
 	let [users, usersSet] = useState([]);
 
 	// Refs
+	let passwdRef = useRef();
 	let permissionsRef = useRef();
 
 	function createSuccess(user) {
@@ -85,8 +89,28 @@ export default function Users(props) {
 		createSet(val => !val);
 	}
 
-	function permissionsCancel() {
-		permissionsSet(false);
+	function passwordUpdate() {
+
+		// Update the agent's password
+		Rest.update('auth', 'user/passwd', {
+			"_id": password,
+			"new_passwd": passwdRef.current.value
+		}).done(res => {
+
+			// If there's an error or warning
+			if(res.error && !Utils.restError(res.error)) {
+				Events.trigger('error', JSON.stringify(res.error));
+			}
+			if(res.warning) {
+				Events.trigger('warning', JSON.stringify(res.warning));
+			}
+
+			// If there's data
+			if(res.data) {
+				Events.trigger('success', 'Password updated');
+				passwordSet(false);
+			}
+		})
 	}
 
 	function permissionsShow(user_id) {
@@ -181,7 +205,8 @@ export default function Users(props) {
 			/>
 			<ResultsComponent
 				actions={[
-					{"tooltip": "Edit User's permissions", "icon": HttpsIcon, "callback": permissionsShow}
+					{"tooltip": "Edit User's permissions", "icon": HttpsIcon, "callback": permissionsShow},
+					{"tooltip": "Change User's password", "icon": VpnKeyIcon, "callback": user_id => passwordSet(user_id)}
 				]}
 				data={users}
 				noun="user"
@@ -193,7 +218,7 @@ export default function Users(props) {
 				<Dialog
 					aria-labelledby="confirmation-dialog-title"
 					maxWidth="lg"
-					onClose={permissionsCancel}
+					onClose={() => permissionsSet(false)}
 					open={true}
 				>
 					<DialogTitle id="permissions-dialog-title">Update Permissions</DialogTitle>
@@ -205,10 +230,34 @@ export default function Users(props) {
 						/>
 					</DialogContent>
 					<DialogActions>
-						<Button variant="contained" color="secondary" onClick={permissionsCancel}>
+						<Button variant="contained" color="secondary" onClick={() => permissionsSet(false)}>
 							Cancel
 						</Button>
 						<Button variant="contained" color="primary" onClick={permissionsUpdate}>
+							Update
+						</Button>
+					</DialogActions>
+				</Dialog>
+			}
+			{password &&
+				<Dialog
+					aria-labelledby="confirmation-dialog-title"
+					maxWidth="lg"
+					onClose={() => passwordSet(false)}
+					open={true}
+				>
+					<DialogTitle id="password-dialog-title">Update Password</DialogTitle>
+					<DialogContent dividers>
+						<TextField
+							label="New Password"
+							inputRef={passwdRef}
+						/>
+					</DialogContent>
+					<DialogActions>
+						<Button variant="contained" color="secondary" onClick={() => passwordSet(false)}>
+							Cancel
+						</Button>
+						<Button variant="contained" color="primary" onClick={passwordUpdate}>
 							Update
 						</Button>
 					</DialogActions>
