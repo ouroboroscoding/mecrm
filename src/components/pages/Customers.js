@@ -11,6 +11,7 @@
 // NPM modules
 import Tree from 'format-oc/Tree'
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 // Material UI
 import Box from '@material-ui/core/Box';
@@ -35,12 +36,6 @@ import CustomerDef from '../../definitions/customers/customer';
 
 // Generate the user Tree
 const CustomerTree = new Tree(clone(CustomerDef));
-
-
-CustomerTree.special('react', {
-	"results": ['_id'],
-	"search": ['_id', 'email', 'first_name', 'last_name', 'dob', 'phoneNumber']
-})
 
 /**
  * Customers
@@ -76,25 +71,14 @@ export default function Customers(props) {
 		<Box id="customers">
 			<Box className="pageHeader">
 				<Typography variant="h3" className="title">Customers</Typography>
-				<Tooltip title="Create new Customer">
-					<IconButton onClick={createToggle}>
-						<PersonAddIcon className="icon" />
-					</IconButton>
-				</Tooltip>
+				<Link to="/customer/new">
+					<Tooltip title="Create new Customer">
+						<IconButton onClick={createToggle}>
+							<PersonAddIcon className="icon" />
+						</IconButton>
+					</Tooltip>
+				</Link>
 			</Box>
-			{create &&
-				<Paper className="padded">
-					<FormComponent
-						cancel={createToggle}
-						errors={{1200: "Email already in use", 1204: "Password not strong enough"}}
-						noun="customer"
-						service="customers"
-						success={createSuccess}
-						tree={CustomerTree}
-						type="create"
-					/>
-				</Paper>
-			}
 			<SearchComponent
 				hash="customers"
 				name="search"
@@ -105,9 +89,9 @@ export default function Customers(props) {
 			/>
 			<ResultsComponent
 				data={customers}
-				noun="user"
+				noun="customer"
 				orderBy=""name
-				service="auth"
+				service="customers"
 				tree={CustomerTree}
 			/>
 		</Box>
