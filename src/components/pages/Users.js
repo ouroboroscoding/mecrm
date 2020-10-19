@@ -198,6 +198,7 @@ export default function Users(props) {
 			}
 			<SearchComponent
 				hash="users"
+				name="users"
 				noun="search"
 				service="auth"
 				success={search}

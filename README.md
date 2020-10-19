@@ -1,7 +1,16 @@
 # MeCRM
 Male Excel CRM
 
+## Clone this repository
+
+If you have not already, clone this repository to your computer. The --recursive param is necessary in order to have git fetch the submodules the project needs alongside the primary code.
+> git clone --recursive git@github.com:bastmaleexcel/mecrm.git
+
+If you already cloned the repo and didn't add the --recursive command, you can run the following to get the submodules.
+> git submodule update --init --recursive
+
 ## nodejs
+
 13.11
 
 ## Available Scripts
@@ -11,7 +20,7 @@ In the project directory, you can run:
 ### `npm start`
 
 Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+Open [http://crm.mems.local:3002](http://crm.mems.local:3002) to view it in the browser.
 
 The page will reload if you make edits.<br />
 You will also see any lint errors in the console.

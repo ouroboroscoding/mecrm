@@ -44,9 +44,6 @@ import Utils from '../../../utils';
 // Definition data
 import CustomerDef from '../../../definitions/customers/customer';
 
-console.log('CustomerDef:', CustomerDef);
-console.log('CustomerDef.__react__:', CustomerDef['__react__'])
-
 // Tree
 const CustomerTree = new Tree(clone(CustomerDef));
 

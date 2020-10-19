@@ -37,8 +37,6 @@ import Utils from '../../../utils';
 // Definitions
 import GroupDef from '../../../definitions/products/group';
 
-console.log(GroupDef);
-
 // Trees
 const GroupTree = new Tree(GroupDef);
 

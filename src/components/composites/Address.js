@@ -79,10 +79,6 @@ export default class Address extends React.Component {
 	}
 
 	countryChange(ev) {
-		console.log(this.fields);
-
-		console.log(this.fields['country'].value);
-
 		this.setState({
 			"divisions": this.fields['country'].value in Divisions ? Divisions[this.fields['country'].value] : null
 		})

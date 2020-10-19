@@ -24,7 +24,6 @@ import AddCircleIcon from '@material-ui/icons/Add';
 
 // Format Components
 import ResultsComponent from '../format/Results';
-import SearchComponent from '../format/Search';
 import FormComponent from '../format/Form';
 import { SelectData } from '../format/Shared';
 
@@ -156,8 +155,6 @@ export default function Products(props) {
 			lGroups[iIndex]['products'].push(o);
 		}
 	}
-
-	console.log(lGroups);
 
 	// Render
 	return (
